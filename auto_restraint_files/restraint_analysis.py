@@ -3,12 +3,18 @@ import pandas as pd
 import numpy as np
 import math
 
-def find_neighbors(mol):
+def find_neighbors(mol, test_loc=''):
     #Return atom number via connectivity of mol2 file
     atom_num_found = False
     atomn_neighbors = []
-    with open('setup/lig_tleap.mol2', 'r') as ligand:
+    if test_loc == '':
+        test_loc = 'setup/lig_tleap.mol2'
+    else:
+        test_loc = test_loc
+    with open(test_loc, 'r') as ligand:
         for line in ligand:
+            if '@<TRIPOS>SUBSTRUCTURE' in line:
+                break
             if mol in line:
                 line = line.split(' ')
                 while '' in line:
