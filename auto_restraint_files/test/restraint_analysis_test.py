@@ -25,6 +25,14 @@ def test_find_neighbors():
     assert(find_neighbors('C8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['18', '14'])
     print('find_neighbors passed')
 
+#check_terminal
+def test_check_terminal():
+    assert(check_terminal(['8', '9', '5'],'C4',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C4')
+    assert(check_terminal(['12', '14', '17', '18'],'N2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N2')
+    assert(check_terminal(['16','14','15','17'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C7')
+    assert(check_terminal(['13','12','14'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N1')
+    assert(check_terminal(['18','14'],'C8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C8')
+    print('check_terminal passed')
 #get_angle
 def test_get_angle():
     assert(almost_equal(get_angle(1,1,1), 1.047))
@@ -37,5 +45,8 @@ def test_get_angle():
         get_angle(0, 3, 4)
     print('get_angle passed')
     
+
+###################Run########################
 test_find_neighbors()
+test_check_terminal()
 test_get_angle()
