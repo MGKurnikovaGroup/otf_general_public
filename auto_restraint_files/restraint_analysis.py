@@ -156,6 +156,16 @@ def get_distance(atom_a, atom_b):
     return ((atom_a[0] - atom_b[0])**2 + (atom_a[1] - atom_b[1])**2 + (atom_a[2] - atom_b[2])**2)**.5
 
 def get_angle(a_b, a_c, b_c):
+    #returns the angle between sides a_b and b_c given integer lengths
+    
+    # Check for zero length sides
+    if a_b == 0 or a_c == 0 or b_c == 0:
+        raise ValueError("Side lengths cannot be zero")
+    
+    # Check for invalid triangle
+    if a_b + b_c <= a_c or a_b + a_c <= b_c or b_c + a_c <= a_b:
+        raise ValueError("Invalid triangle sides")
+    
     return  np.arccos((b_c**2 + a_b**2 - a_c**2)/(2*b_c*a_b))
 
 
