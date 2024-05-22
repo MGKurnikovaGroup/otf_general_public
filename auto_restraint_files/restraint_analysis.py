@@ -3,15 +3,14 @@ import pandas as pd
 import numpy as np
 import math
 
-def find_neighbors(mol, test_loc=''):
+def find_neighbors(mol, loc='setup/lig_tleap.mol2'):
     #Return atom number via connectivity of mol2 file
+    #input: string mol ('C4'), string test_loc (path to file)
+    #returns: string list containing indices of neighbors
+
     atom_num_found = False
     atomn_neighbors = []
-    if test_loc == '':
-        test_loc = 'setup/lig_tleap.mol2'
-    else:
-        test_loc = test_loc
-    with open(test_loc, 'r') as ligand:
+    with open(loc, 'r') as ligand:
         for line in ligand:
             if '@<TRIPOS>SUBSTRUCTURE' in line:
                 break
@@ -36,11 +35,22 @@ def find_neighbors(mol, test_loc=''):
     ligand.close()
     return atomn_neighbors
 
-def check_terminal(moln_list, mol):
+
+#input output type comments
+
+def find_hydrogen_neighbor(moln_list, mol, loc='setup/lig_tleap.mol2'):
     #If terminal, returns bound heavy atom. Else returns self
+    #input: String List moln_list, contains indices of hydrogen neighbors;
+    #       String mol, molecule name ('H8')
+    #returns: String, name of bound heavy atom ('C7') OR self ('H8')
+    #requires: mol is hydrogen
+    #          moln_list contains neighbors to mol
+
+    #bug: if mol not in moln_list, still returns mol
+
     atom_neighbors=[]
     for item in moln_list:
-        with open('setup/lig_tleap.mol2', 'r') as ligand:
+        with open(loc, 'r') as ligand:
             start_checking = False
             for line in ligand:
                 if '@<TRIPOS>BOND' in line:
@@ -68,11 +78,14 @@ def check_terminal(moln_list, mol):
                 if not 'H' in atom:
                     return atom
 
-def neighbor_names(moln_list):
+def neighbor_names(moln_list, loc='setup/lig_tleap.mol2'):
     #Return atom names of heavy atom neighbors
+    #input: String moln_list, contains indices of neighbors
+    #returns: String List, names of neighbors
+
     atom_neighbors=[]
     for item in moln_list:
-        with open('setup/lig_tleap.mol2', 'r') as ligand:
+        with open(loc, 'r') as ligand:
             start_checking = False
             for line in ligand:
                 if '@<TRIPOS>BOND' in line:
@@ -95,7 +108,7 @@ def neighbor_names(moln_list):
 def process_mol_atom_a(atom):
     if 'H' in atom:
         neighbors=find_neighbors(atom)
-        atom = check_terminal(neighbors, atom)
+        atom = find_hydrogen_neighbor(neighbors, atom)
     neighbors=find_neighbors(atom)
     #print('neighbors',neighbors)
     n_names=neighbor_names(neighbors)
