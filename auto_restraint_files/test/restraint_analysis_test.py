@@ -27,8 +27,10 @@ def test_find_neighbors():
 
 #check_terminal
 def test_check_terminal():
-    assert(check_terminal(['8', '9', '5'],'C4',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C4')
-    assert(check_terminal(['12', '14', '17', '18'],'N2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N2')
+    #input list should be only neighbor indices
+    # assert(check_terminal(['8', '9', '5'],'C4',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C4')
+    # assert(check_terminal(['12', '14', '17', '18'],'N2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N2')
+
     assert(check_terminal(['16','14','15','17'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C7')
     assert(check_terminal(['13','12','14'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N1')
     assert(check_terminal(['18','14'],'C8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C8')
