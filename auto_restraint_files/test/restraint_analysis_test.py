@@ -57,10 +57,23 @@ def test_get_angle():
     with pytest.raises(ValueError, match="Side lengths cannot be zero"):
         get_angle(0, 3, 4)
     print('get_angle passed')
-    
 
+#find_location 
+def test_find_location():
+    assert(find_location('C4',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (33.466, 29.156, 39.458))
+    assert(find_location('H5',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (33.055, 29.805, 37.463))
+    assert(find_location('N2',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (31.915, 34.831, 36.163))
+
+    #residue not 1, should throw exception
+    with pytest.raises(Exception, match="location not found"):
+        find_location('N',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')
+    with pytest.raises(Exception, match="location not found"):
+        find_location('HD3',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')
+    
+    print('find_location passed')
 ###################Run########################
 test_find_neighbors()
 test_find_hydrogen_neighbor()
 test_neighbor_names()
+test_find_location()
 test_get_angle()
