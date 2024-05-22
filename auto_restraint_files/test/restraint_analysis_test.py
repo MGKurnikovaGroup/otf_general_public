@@ -25,16 +25,27 @@ def test_find_neighbors():
     assert(find_neighbors('C8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['18', '14'])
     print('find_neighbors passed')
 
-#check_terminal
-def test_check_terminal():
+#find_hydrogen_neighbor
+def test_find_hydrogen_neighbor():
     #input list should be only neighbor indices
-    # assert(check_terminal(['8', '9', '5'],'C4',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C4')
-    # assert(check_terminal(['12', '14', '17', '18'],'N2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N2')
+    assert(find_hydrogen_neighbor(['14'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'C7')
+    assert(find_hydrogen_neighbor(['3'],'H2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'C2')
+    assert(find_hydrogen_neighbor(['12'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'N1')
 
-    assert(check_terminal(['16','14','15','17'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C7')
-    assert(check_terminal(['13','12','14'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='N1')
-    assert(check_terminal(['18','14'],'C8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2')=='C8')
-    print('check_terminal passed')
+    #non terminal hydrogen
+    assert(find_hydrogen_neighbor(['12','1'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'H6')
+    assert(find_hydrogen_neighbor(['14','1'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'H8')
+    print('find_hydrogen_neighbor passed')
+
+#neighbor_names
+def test_neighbor_names():
+    assert(neighbor_names(['8', '9', '5'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C5', 'C3'])
+    assert(neighbor_names(['2', '3', '11'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C2', 'C6'])
+    assert(neighbor_names(['17'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C8'])
+    assert(neighbor_names(['18', '14'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['N2', 'C7'])
+    assert(neighbor_names(['10', '11', '7'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C6', 'C4'])
+    print('neighbor_names passed')
+
 #get_angle
 def test_get_angle():
     assert(almost_equal(get_angle(1,1,1), 1.047))
@@ -50,5 +61,6 @@ def test_get_angle():
 
 ###################Run########################
 test_find_neighbors()
-test_check_terminal()
+test_find_hydrogen_neighbor()
+test_neighbor_names()
 test_get_angle()
