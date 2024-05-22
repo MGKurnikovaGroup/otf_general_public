@@ -134,18 +134,31 @@ def process_mol_atom_a(atom):
     #print(neighbors_neighbors_number)
     return n_names, neighbors_neighbors_names 
 
-def find_location(atom):
-    with open('complex-repres.pdb', 'r') as ligand:
+def find_location(atom, loc='complex-repres.pdb'):
+    #input: String atom ('C4')
+    #returns: Tuple (float, float, float) xyz location of atom
+    #Assumes that the ligand is the first residue.
+    #Should fail if gets to second residue without finding name
+    with open(loc, 'r') as ligand:
         for line in ligand:
             line = line.split(' ')
             while '' in line:
                 line.remove('')
-            if atom == line[2]:
+            if (len(line) >= 5 and line[4] == '1') and atom == line[2]:
                 return (float(line[5]), float(line[6]), float(line[7]))
+    raise Exception("location not found")
 
-def find_residue_loc(residue):
+def find_residue_loc(residue, loc='complex-repres.pdb'):
+    #input: String residue, acceptor from BB.avg.data or BB2.avg.data (GLN_103@OE1)
+    #returns: Tuple (Tuple (float, float, float), Tuple (float, float, float)) xyz location of residue
+    #         OR None if N, C, CA molecules not found in the group
+
+    #dispose of the molecule name (@ and to the right)
+    if residue.find('@') != -1:
+        residue = residue[:residue.find('@')]
+    
     res_name, res_number = residue.split('_')
-    with open('complex-repres.pdb', 'r') as protein:
+    with open(loc, 'r') as protein:
         has_N = False
         has_C = False
         has_CA = False
@@ -154,7 +167,7 @@ def find_residue_loc(residue):
             while '' in line:
                 line.remove('')
             if len(line) == 12:
-                if res_name in line[3] and res_number in line[4]:
+                if res_name == line[3] and res_number == line[4]:
                     if 'N' == line[2]:
                         N_loc = (float(line[5]), float(line[6]), float(line[7]))
                         has_N = True

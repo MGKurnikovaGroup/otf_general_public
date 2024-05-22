@@ -70,7 +70,7 @@ def test_find_residue_loc():
     #using a bad file, should return None if either N, C, CA not found
     assert(find_residue_loc('MET_2', str(root_dir)+'/lysozyme_test_case_restraints/complex-repres_test.pdb')==None)
     print('find_residue_loc passed')
-    
+
 #get_angle
 def test_get_angle():
     assert(almost_equal(get_angle(1,1,1), 1.047))
