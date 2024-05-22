@@ -46,18 +46,6 @@ def test_neighbor_names():
     assert(neighbor_names(['10', '11', '7'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C6', 'C4'])
     print('neighbor_names passed')
 
-#get_angle
-def test_get_angle():
-    assert(almost_equal(get_angle(1,1,1), 1.047))
-    assert(almost_equal(get_angle(1,1,1), 1.047))
-    assert(almost_equal(get_angle(3,4,5), 0.927))
-    assert(almost_equal(get_angle(0.5,0.7,0.3), 2.094))
-    with pytest.raises(ValueError, match="Invalid triangle sides"):
-        get_angle(1, 2, 3)
-    with pytest.raises(ValueError, match="Side lengths cannot be zero"):
-        get_angle(0, 3, 4)
-    print('get_angle passed')
-
 #find_location 
 def test_find_location():
     assert(find_location('C4',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (33.466, 29.156, 39.458))
@@ -71,9 +59,34 @@ def test_find_location():
         find_location('HD3',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')
     
     print('find_location passed')
+
+#find_residue_loc
+def test_find_residue_loc():
+    assert(find_residue_loc('GLN_103@OE1',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((39.307, 35.579, 41.28), (38.205, 36.478, 41.686), (37.618, 36.185, 43.064)), ((37.618, 36.185, 43.064), (38.205, 36.478, 41.686), (39.307, 35.579, 41.28))))
+    assert(find_residue_loc('GLN_103',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((39.307, 35.579, 41.28), (38.205, 36.478, 41.686), (37.618, 36.185, 43.064)), ((37.618, 36.185, 43.064), (38.205, 36.478, 41.686), (39.307, 35.579, 41.28))))
+    assert(find_residue_loc('LEU_119@HD22',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((28.480, 32.989, 35.591), (28.480, 31.690, 36.196), (27.778, 30.632, 35.349)), ((27.778, 30.632, 35.349), (28.480, 31.690, 36.196), (28.480, 32.989, 35.591))))
+    assert(find_residue_loc('LEU_119',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((28.480, 32.989, 35.591), (28.480, 31.690, 36.196), (27.778, 30.632, 35.349)), ((27.778, 30.632, 35.349), (28.480, 31.690, 36.196), (28.480, 32.989, 35.591))))
+
+    #using a bad file, should return None if either N, C, CA not found
+    assert(find_residue_loc('MET_2', str(root_dir)+'/lysozyme_test_case_restraints/complex-repres_test.pdb')==None)
+    print('find_residue_loc passed')
+    
+#get_angle
+def test_get_angle():
+    assert(almost_equal(get_angle(1,1,1), 1.047))
+    assert(almost_equal(get_angle(1,1,1), 1.047))
+    assert(almost_equal(get_angle(3,4,5), 0.927))
+    assert(almost_equal(get_angle(0.5,0.7,0.3), 2.094))
+    with pytest.raises(ValueError, match="Invalid triangle sides"):
+        get_angle(1, 2, 3)
+    with pytest.raises(ValueError, match="Side lengths cannot be zero"):
+        get_angle(0, 3, 4)
+    print('get_angle passed')
+
 ###################Run########################
 test_find_neighbors()
 test_find_hydrogen_neighbor()
 test_neighbor_names()
 test_find_location()
+test_find_residue_loc()
 test_get_angle()
