@@ -84,7 +84,11 @@ def test_find_residue_loc():
 
 #find_residue_names
 def test_find_residue_names():
-    pass
+    assert(find_residue_names('SER_118')==(('118@N', '118@CA', '118@C'), ('118@C', '118@CA', '118@N')))
+    assert(find_residue_names('LEU_122')==(('122@N', '122@CA', '122@C'), ('122@C', '122@CA', '122@N')))
+    assert(find_residue_names('VAL_112')==(('112@N', '112@CA', '112@C'), ('112@C', '112@CA', '112@N')))
+    print('find_residue_names passed')
+
 #get_distance
 def test_get_distance():
     assert almost_equal(get_distance((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)), 5.196)
@@ -93,6 +97,7 @@ def test_get_distance():
     assert almost_equal(get_distance((0.0, 0.0, 0.0), (0.0, 0.0, 0.0)), 0.0)
     assert almost_equal(get_distance((1000.0, 2000.0, 3000.0), (4000.0, 5000.0, 6000.0)), 5196.152)
     print('get_distance passed')
+
 #get_angle
 def test_get_angle():
     assert(almost_equal(get_angle(1,1,1), 1.047))
@@ -105,6 +110,9 @@ def test_get_angle():
         get_angle(0, 3, 4)
     print('get_angle passed')
 
+def test_angle_deviation():
+    pass
+
 ###################Run########################
 test_find_neighbors()
 test_find_hydrogen_neighbor()
@@ -114,3 +122,4 @@ test_find_residue_loc()
 test_find_residue_names()
 test_get_distance()
 test_get_angle()
+test_angle_deviation()
