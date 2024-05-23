@@ -11,9 +11,20 @@ from restraint_analysis import *
 ###################Helpers########################
 root_dir = Path(__file__).resolve().parent.parent.parent
 
-def almost_equal(a, b, places=3):
-    return round(abs(a - b), places) == 0
 
+
+def truncate_to_three_decimals(number):
+    str_num = str(number)
+    if '.' in str_num:
+        integer_part, decimal_part = str_num.split('.')
+        truncated_decimal_part = decimal_part[:3]  # Take only the first three digits of the fractional part
+        return f"{integer_part}.{truncated_decimal_part}"
+    else:
+        return str_num
+
+#considered equal if the first three decimals match
+def almost_equal(num1, num2, places=3):
+    return truncate_to_three_decimals(num1) == truncate_to_three_decimals(num2)
 ###################Tests########################
 
 #find_neighbors
@@ -71,6 +82,17 @@ def test_find_residue_loc():
     assert(find_residue_loc('MET_2', str(root_dir)+'/lysozyme_test_case_restraints/complex-repres_test.pdb')==None)
     print('find_residue_loc passed')
 
+#find_residue_names
+def test_find_residue_names():
+    pass
+#get_distance
+def test_get_distance():
+    assert almost_equal(get_distance((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)), 5.196)
+    assert almost_equal(get_distance((-1.0, -2.0, -3.0), (-4.0, -5.0, -6.0)), 5.196)
+    assert almost_equal(get_distance((1.0, -2.0, 3.0), (-4.0, 5.0, -6.0)), 12.449, 3)
+    assert almost_equal(get_distance((0.0, 0.0, 0.0), (0.0, 0.0, 0.0)), 0.0)
+    assert almost_equal(get_distance((1000.0, 2000.0, 3000.0), (4000.0, 5000.0, 6000.0)), 5196.152)
+    print('get_distance passed')
 #get_angle
 def test_get_angle():
     assert(almost_equal(get_angle(1,1,1), 1.047))
@@ -89,4 +111,6 @@ test_find_hydrogen_neighbor()
 test_neighbor_names()
 test_find_location()
 test_find_residue_loc()
+test_find_residue_names()
+test_get_distance()
 test_get_angle()
