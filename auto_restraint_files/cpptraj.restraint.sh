@@ -6,6 +6,7 @@ echo $myframe
 myframe2=$((myframe + 200))
 echo $myframe2
 
+#Needs to be updated for protein ligand residue numbering general
 cd md-complex
 cpptraj -p complex.prmtop <<END
         trajin nvt-7ns.nc $myframe $myframe2

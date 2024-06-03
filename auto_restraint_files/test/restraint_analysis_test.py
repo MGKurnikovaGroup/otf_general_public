@@ -1,0 +1,139 @@
+import sys
+import os
+import pytest
+from pathlib import Path
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, parent_dir)
+
+from restraint_analysis import *
+
+###################Helpers########################
+root_dir = Path(__file__).resolve().parent.parent.parent
+
+
+
+def truncate_to_three_decimals(number):
+    str_num = str(number)
+    if '.' in str_num:
+        integer_part, decimal_part = str_num.split('.')
+        truncated_decimal_part = decimal_part[:3]  # Take only the first three digits of the fractional part
+        return f"{integer_part}.{truncated_decimal_part}"
+    else:
+        return str_num
+
+#considered equal if the first three decimals match
+def almost_equal(num1, num2, places=3):
+    return truncate_to_three_decimals(num1) == truncate_to_three_decimals(num2)
+###################Tests########################
+
+#find_neighbors()
+def test_find_neighbors():
+    assert(find_neighbors('C4',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['8', '9', '5'])
+    assert(find_neighbors('C1',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['2', '3', '11'])
+    assert(find_neighbors('N2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['17'])
+    assert(find_neighbors('H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['14'])
+    assert(find_neighbors('C8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['18', '14'])
+    print('find_neighbors passed')
+
+#find_hydrogen_neighbor()
+def test_find_hydrogen_neighbor():
+    #input list should be only neighbor indices
+    assert(find_hydrogen_neighbor(['14'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'C7')
+    assert(find_hydrogen_neighbor(['3'],'H2',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'C2')
+    assert(find_hydrogen_neighbor(['12'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'N1')
+
+    #non terminal hydrogen
+    assert(find_hydrogen_neighbor(['12','1'],'H6',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'H6')
+    assert(find_hydrogen_neighbor(['14','1'],'H8',str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == 'H8')
+    print('find_hydrogen_neighbor passed')
+
+#neighbor_names()
+def test_neighbor_names():
+    assert(neighbor_names(['8', '9', '5'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C5', 'C3'])
+    assert(neighbor_names(['2', '3', '11'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C2', 'C6'])
+    assert(neighbor_names(['17'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C8'])
+    assert(neighbor_names(['18', '14'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['N2', 'C7'])
+    assert(neighbor_names(['10', '11', '7'],str(root_dir)+'/lysozyme_test_case_restraints/setup/lig_tleap.mol2') == ['C6', 'C4'])
+    print('neighbor_names passed')
+
+#find_location()
+def test_find_location():
+    assert(find_location('C4',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (33.466, 29.156, 39.458))
+    assert(find_location('H5',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (33.055, 29.805, 37.463))
+    assert(find_location('N2',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb') == (31.915, 34.831, 36.163))
+
+    #residue not 1, should throw exception
+    with pytest.raises(Exception, match="location not found"):
+        find_location('N',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')
+    with pytest.raises(Exception, match="location not found"):
+        find_location('HD3',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')
+    
+    print('find_location passed')
+
+#find_residue_loc()
+def test_find_residue_loc():
+    assert(find_residue_loc('GLN_103@OE1',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((39.307, 35.579, 41.28), (38.205, 36.478, 41.686), (37.618, 36.185, 43.064)), ((37.618, 36.185, 43.064), (38.205, 36.478, 41.686), (39.307, 35.579, 41.28))))
+    assert(find_residue_loc('GLN_103',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((39.307, 35.579, 41.28), (38.205, 36.478, 41.686), (37.618, 36.185, 43.064)), ((37.618, 36.185, 43.064), (38.205, 36.478, 41.686), (39.307, 35.579, 41.28))))
+    assert(find_residue_loc('LEU_119@HD22',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((28.480, 32.989, 35.591), (28.480, 31.690, 36.196), (27.778, 30.632, 35.349)), ((27.778, 30.632, 35.349), (28.480, 31.690, 36.196), (28.480, 32.989, 35.591))))
+    assert(find_residue_loc('LEU_119',str(root_dir)+'/lysozyme_test_case_restraints/complex-repres.pdb')==(((28.480, 32.989, 35.591), (28.480, 31.690, 36.196), (27.778, 30.632, 35.349)), ((27.778, 30.632, 35.349), (28.480, 31.690, 36.196), (28.480, 32.989, 35.591))))
+
+    #using a bad file, should return None if either N, C, CA not found
+    assert(find_residue_loc('MET_2', str(root_dir)+'/lysozyme_test_case_restraints/complex-repres_test.pdb')==None)
+    print('find_residue_loc passed')
+
+#find_residue_names()
+def test_find_residue_names():
+    assert(find_residue_names('SER_118')==(('118@N', '118@CA', '118@C'), ('118@C', '118@CA', '118@N')))
+    assert(find_residue_names('LEU_122')==(('122@N', '122@CA', '122@C'), ('122@C', '122@CA', '122@N')))
+    assert(find_residue_names('VAL_112')==(('112@N', '112@CA', '112@C'), ('112@C', '112@CA', '112@N')))
+    print('find_residue_names passed')
+
+#get_distance()
+def test_get_distance():
+    assert almost_equal(get_distance((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)), 5.196)
+    assert almost_equal(get_distance((-1.0, -2.0, -3.0), (-4.0, -5.0, -6.0)), 5.196)
+    assert almost_equal(get_distance((1.0, -2.0, 3.0), (-4.0, 5.0, -6.0)), 12.449, 3)
+    assert almost_equal(get_distance((0.0, 0.0, 0.0), (0.0, 0.0, 0.0)), 0.0)
+    assert almost_equal(get_distance((1000.0, 2000.0, 3000.0), (4000.0, 5000.0, 6000.0)), 5196.152)
+    print('get_distance passed')
+
+#get_angle()
+def test_get_angle():
+    assert(almost_equal(get_angle(1,1,1), 1.047))
+    assert(almost_equal(get_angle(1,1,1), 1.047))
+    assert(almost_equal(get_angle(3,4,5), 0.927))
+    assert(almost_equal(get_angle(0.5,0.7,0.3), 2.094))
+    with pytest.raises(ValueError, match="Invalid triangle sides"):
+        get_angle(1, 2, 3)
+    with pytest.raises(ValueError, match="Side lengths cannot be zero"):
+        get_angle(0, 3, 4)
+    print('get_angle passed')
+
+#valid()
+def test_valid():
+    assert(valid(((48.082, 36.606, 29.121), (50.558, 35.805, 32.021), (53.561, 35.533, 29.583)),[(33.985, 31.377, 38.696), (33.85, 32.334, 37.722), (33.149, 33.616, 38.163)])==True)
+    assert(valid(((0, 0, 0), (1, 0, 0), (0, 1, 0)), [(0, 0, 1), (1, 0, 1), (0, 1, 1)]) == True)
+    assert(valid(((1, 0, 0), (0, 1, 0), (0, 0, 1)),[(1, 1, 1), (2, 2, 2), (3, 3, 3)]) == False)
+    assert(valid(((0, 0, 0), (1, 1, 1), (2, 2, 2)),[(3, 3, 3), (4, 4, 4), (5, 5, 5)]) == False)
+    assert(valid(((1.5, 1.5, 1.5),(2.5, 2.5, 2.5),(3.5, 3.5, 3.5)),[(4.5, 4.5, 4.5),(5.5, 5.5, 5.5),(6.5, 6.5, 6.5)]) == True)
+    assert(valid(((100000.0, 200000.0, 300000.0), (400000.0, 500000.0, 600000.0), (700000.0, 800000.0, 900000.0)),[(1000000.0, 1100000.0, 1200000.0), (1300000.0, 1400000.0, 1500000.0), (1600000.0, 1700000.0, 1800000.0)]) == True)
+
+#angle_deviation()
+def test_angle_deviation():
+    assert angle_deviation((math.pi/2, math.pi/2, math.pi/2, math.pi/2)) == 0.0
+    assert angle_deviation((math.pi/4, math.pi/4, math.pi/4, math.pi/4)) == 0.7853981633974483
+    assert angle_deviation((0, 0, 0, 0)) == math.pi/2
+    assert almost_equal(angle_deviation((math.pi/2 - 0.1, math.pi/2 + 0.1, math.pi/2 - 0.05, math.pi/2)), 0.0625)
+    print('angle_deviation passed')
+
+###################Run########################
+test_find_neighbors()
+test_find_hydrogen_neighbor()
+test_neighbor_names()
+test_find_location()
+test_find_residue_loc()
+test_find_residue_names()
+test_get_distance()
+test_get_angle()
+test_angle_deviation()

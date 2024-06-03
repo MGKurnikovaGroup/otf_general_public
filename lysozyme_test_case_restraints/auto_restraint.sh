@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for X in "$@"
+do
+        echo =====  $X  =======================
+
+        cd $X
+	cp ../auto_restraint_files/* .
+	./cpptraj.restraint.sh
+        python3 restraint_analysis.py
+        cd ..
+done
+
