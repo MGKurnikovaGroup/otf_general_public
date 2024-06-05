@@ -6,12 +6,10 @@ from pathlib import Path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, parent_dir)
 
-from restraint_analysis import *
+from restraint_analysis_functions import *
 
 ###################Helpers########################
 root_dir = Path(__file__).resolve().parent.parent.parent
-
-
 
 def truncate_to_three_decimals(number):
     str_num = str(number)
@@ -144,15 +142,14 @@ def test_get_angle():
 
 #valid()
 def test_valid():
+
     assert(valid(((48.082, 36.606, 29.121), (50.558, 35.805, 32.021), (53.561, 35.533, 29.583)),[(33.985, 31.377, 38.696), (33.85, 32.334, 37.722), (33.149, 33.616, 38.163)])==True)
-    assert(valid(((0, 0, 0), (1, 0, 0), (0, 1, 0)), [(0, 0, 1), (1, 0, 1), (0, 1, 1)]) == True)
+    assert(valid(((0, 0, 0), (1, 0, 0), (0, 1, 0)), [(0, 0, 1), (1, 0, 1), (0, 1, 1)]) == False)
     assert(valid(((1, 0, 0), (0, 1, 0), (0, 0, 1)),[(1, 1, 1), (2, 2, 2), (3, 3, 3)]) == False)
-    # assert(valid(((0, 0, 0), (1, 1, 1), (2, 2, 2)),[(3, 3, 3), (4, 4, 4), (5, 5, 5)]) == False)
-    # assert(valid(((1.5, 1.5, 1.5),(2.5, 2.5, 2.5),(3.5, 3.5, 3.5)),[(4.5, 4.5, 4.5),(5.5, 5.5, 5.5),(6.5, 6.5, 6.5)]) == True)
-    assert(valid(((100000.0, 200000.0, 300000.0), (400000.0, 500000.0, 600000.0), (700000.0, 800000.0, 900000.0)),[(1000000.0, 1100000.0, 1200000.0), (1300000.0, 1400000.0, 1500000.0), (1600000.0, 1700000.0, 1800000.0)]) == True)
+    assert(valid(((4,6,5), (5,6,7), (6,7,4)),[(7,5,6), (5,3,4), (3,4,5)]) == True)
+    print('valid passed')
 
 def test_calc_angles():
-
 
     res_loc1 = [(0,0,0), (1,1,0), (0,1,1)]
     mol_loc1 = [(2,2,2), (2,3,3), (4,4,3)]
@@ -174,6 +171,42 @@ def test_angle_deviation():
     assert almost_equal(angle_deviation((math.pi/2 - 0.1, math.pi/2 + 0.1, math.pi/2 - 0.05, math.pi/2)), 0.0625)
     print('angle_deviation passed')
 
+#choose_neighbors()
+def test_choose_neighbors():
+    
+    res_loc = ((48.082, 36.606, 29.121), (50.558, 35.805, 32.021), (53.561, 35.533, 29.583))
+    res_loc_2 = ((53.561, 35.533, 29.583), (50.558, 35.805, 32.021), (48.082, 36.606, 29.121))
+    mol_atom_a = 'C6'
+    n_names = ['N1', 'C5', 'C1']
+    neighbors_neighbors_names = [['C7'], ['C4'], ['C2']]
+    mol_atom_a_loc = (33.985, 31.377, 38.696)
+    n_locations = [(33.85, 32.334, 37.722), (33.51, 30.07, 38.413), (34.518, 31.68, 39.967)]
+    nn_locations = [[(33.149, 33.616, 38.163)], [(33.466, 29.156, 39.458)], [(34.467, 30.76, 40.948)]]
+    test1 = choose_neighbors(res_loc, res_loc_2, mol_atom_a, n_names, 
+                            neighbors_neighbors_names, mol_atom_a_loc, 
+                            n_locations, nn_locations) 
+    print(test1[0])
+    assert(test1[0] == [(33.985, 31.377, 38.696), (34.518, 31.68, 39.967), (34.467, 30.76, 40.948)])
+    assert(test1[1] == ['C6', 'C1', 'C2'])
+    assert(test1[2] == 0)
+
+    #testing with no valid locations
+    res_loc = ((0,0,0), (1,1,0), (0,1,1))
+    res_loc_2 = ((0,0,0), (1,1,0), (0,1,1))
+    mol_atom_a = 'C6'
+    n_names = ['N1', 'C5', 'C1']
+    neighbors_neighbors_names = [['C7'], ['C4'], ['C2']]
+    mol_atom_a_loc = (2,2,2)
+    n_locations = [(2,3,3), (3,3,3), (3,2,2)]
+    nn_locations = [[(3,3,3)], [(4,4,3)], [(3,2,2)]]
+    test2 = choose_neighbors(res_loc, res_loc_2, mol_atom_a, n_names, 
+                            neighbors_neighbors_names, mol_atom_a_loc, 
+                            n_locations, nn_locations) 
+    assert(test2[0] == [(0,0,0), (1,1,1), (2,2,2)])
+    assert(test2[1] == ['C6', 'N1', 'C7'])
+    assert(test2[2] == 0)
+
+    print('choose_neighbors passed')
 def test_centroid_search():
 
     #using shortened version of complex-repres as test file
@@ -194,6 +227,39 @@ def test_centroid_search():
 
     print('centroid_search passed')
 
+#find_ca_atoms()
+def test_find_ca_atoms():
+    path = str(root_dir)+'/lysozyme_test_case_restraints/complex-repres_test3.pdb'
+    atoms = find_ca_atoms(path)[0]
+    locations = find_ca_atoms(path)[1]
+
+    assert(atoms[0] == '2@CA')
+    assert(locations[0] == (52.062, 27.992, 35.661))
+
+    assert(atoms[2] == '4@CA')
+    assert(locations[2] == (47.510, 30.084, 41.296))
+
+    assert(atoms[4] == '6@CA')
+    assert(locations[4] == (52.317, 32.651, 40.941))
+
+    print('find_ca_atoms passed')
+
+#find_backbone_atoms()
+def test_find_backbone_atoms():
+    path = str(root_dir)+'/lysozyme_test_case_restraints/complex-repres_test3.pdb'
+    atoms = find_backbone_atoms(path)[0]
+    locations = find_backbone_atoms(path)[1]
+
+    assert(atoms[0] == '2@N')
+    assert(locations[0] == (52.727, 26.791, 35.159))
+
+    assert(atoms[2] == '2@C')
+    assert(locations[2] == (50.938, 27.657, 36.655))
+
+    assert(atoms[4] == '3@CA')
+    assert(locations[4] == (49.952, 28.234, 38.839))
+
+    print('find_backbone_atoms passed')
 ###################Run########################
 test_find_neighbors()
 test_find_hydrogen_neighbor()
@@ -204,6 +270,9 @@ test_find_residue_names()
 test_get_distance()
 test_get_angle()
 test_angle_deviation()
+test_choose_neighbors()
 test_calc_angles()
-# test_valid()
+test_valid()
 test_centroid_search()
+test_find_ca_atoms()
+test_find_backbone_atoms()
