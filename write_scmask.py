@@ -23,7 +23,7 @@ for l in ifile:
     elif "L1" in l:
         lig2.append(l.strip().split())
 
-
+print(lig1[0])
 #print(lig2[2][7])
 #min(len(lig1), len(lig2))
 
@@ -82,15 +82,39 @@ for y in scmask_temp2:
         scmask_clean2.append(y)
 
 #print(scmask_clean1, "\n", scmask_clean2)
-
+print(scmask_clean1)
+remove_mask1=[]
+remove_mask2=[]
+for i in range(len(scmask_clean1)):
+    for j in lig1:
+        if j[2] == scmask_clean1[i]:
+            coord1=(float(j[5]),float(j[6]),float(j[7]))
+            break
+    for j in range(len(scmask_clean2)):
+        for k in lig2:
+            if k[2] == scmask_clean2[j]:
+                coord2=(float(k[5]),float(k[6]),float(k[7]))
+                break
+        if math.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2+(coord1[2]-coord1[2])**2)<.1:
+            remove_mask1.append(i)
+            remove_mask2.append(j)
+            break
+scmask_true1=[]
+scmask_true2=[]
+for i in range(len(scmask_clean1)):
+    if i not in remove_mask1:
+        scmask_true1.append(scmask_clean1[i])
+for i in range(len(scmask_clean2)):
+    if i not in remove_mask2:
+        scmask_true2.append(scmask_clean2[i])
 #generate final AMBER masks
-if len(scmask_clean1)>0:
-    scmask1 = ":1@"+",".join(scmask_clean1)
+if len(scmask_true1)>0:
+    scmask1 = ":1@"+",".join(scmask_true1)
 else:
     scmask1 = ''
     
-if len(scmask_clean2)>0:
-    scmask2 = ":2@"+",".join(scmask_clean2)
+if len(scmask_true2)>0:
+    scmask2 = ":2@"+",".join(scmask_true2)
 else:
     scmask2 = ''
 
