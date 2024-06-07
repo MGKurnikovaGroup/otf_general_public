@@ -2,10 +2,10 @@ import sys
 import pandas as pd
 import numpy as np
 import math
+import os
+
 
 from restraint_analysis_functions import *
-
-
 
 df1 = pd.read_csv('md-complex/BB.avg.dat', engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
 df2 = pd.read_csv('md-complex/BB2.avg.dat', engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
@@ -15,6 +15,7 @@ df2_rel=df2[df2['Frac'] >= .5]
 ligand=open('setup/lig_tleap.mol2', 'r')
 
 #check if multiple options, calculate centroid
+#If no fractions are >= .5, perform centroid search
 if len(df1_rel) + len(df2_rel) > 1:
     ligand=open('setup/lig_tleap.mol2', 'r')
     start = False
