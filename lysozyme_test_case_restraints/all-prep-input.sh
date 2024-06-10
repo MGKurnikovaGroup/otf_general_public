@@ -1,6 +1,6 @@
 #!/bin/bash
 mywd=$(pwd)
-mypcl=~/protocols/lys_abfe_10
+mypcl=~/protocols/gp_auto_protocol
 
 for X in "$@"
 do
