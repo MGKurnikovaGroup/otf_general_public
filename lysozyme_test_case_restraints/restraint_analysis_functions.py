@@ -3,26 +3,37 @@ import pandas as pd
 import numpy as np
 import math
 
-def execute(frac):
-    df1 = pd.read_csv('md-complex/BB.avg.dat', engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
-    df2 = pd.read_csv('md-complex/BB2.avg.dat', engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
+#########Execution#########
+def execute(frac, bb='md-complex/BB.avg.dat', bb2='md-complex/BB2.avg.dat', ligand='setup/lig_tleap.mol2', pdb='complex-repres.pdb'):
+    global bb_file
+    bb_file = bb
+    global bb2_file
+    bb2_file = bb2
+    global ligand_file
+    ligand_file = ligand
+    global pdb_file
+    pdb_file = pdb
+    df1 = pd.read_csv(bb_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
+    df2 = pd.read_csv(bb2_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
     df1_rel=df1[df1['Frac'] >= float(frac)]
     df2_rel=df2[df2['Frac'] >= float(frac)]
 
+
+
     # ligand=open('setup/lig_tleap.mol2', 'r')
 
-    #check for multiple options
+    #check for multiple options. Only one is executed.
     if len(df1_rel) + len(df2_rel) > 1:
-        exec1(df1_rel, df2_rel)
+        exec1(df1_rel, df2_rel, ligand_file, pdb_file)
     elif len(df1_rel)+len(df2_rel) > 0:
-        exec2(df1_rel, df2_rel)
+        exec2(df1_rel, df2_rel, pdb_file)
     #centroid search
     else:
-        exec3()
+        exec3(pdb_file)
 
 
-def exec1(df1_rel, df2_rel):
-    ligand=open('setup/lig_tleap.mol2', 'r')
+def exec1(df1_rel, df2_rel, ligand_file, pdb_file):
+    ligand=open(ligand_file, 'r')
     start = False
     xs=[]
     ys=[]
@@ -49,7 +60,7 @@ def exec1(df1_rel, df2_rel):
             item = df1_rel['Donor'][i]
             counter_item=df1_rel['Acceptor'][i].split('@')[0]
             atom = item.split('@')[1]
-            ligand=open('setup/lig_tleap.mol2', 'r')
+            ligand=open(ligand_file, 'r')
             for line in ligand:
                 if atom in line:
                     lines=line.split(' ')
@@ -64,7 +75,7 @@ def exec1(df1_rel, df2_rel):
             item = df2_rel['Acceptor'][i]
             counter_item = df2_rel['Donor'][i].split('@')[0]
             atom = item.split('@')[1]
-            ligand=open('setup/lig_tleap.mol2', 'r')
+            ligand=open(ligand_file, 'r')
             for line in ligand:
                 if atom in line:
                     lines=line.split(' ')
@@ -174,7 +185,7 @@ def exec1(df1_rel, df2_rel):
                     atom_names.pop(np.argmin(atom_distances))
                     atom_distances.pop(np.argmin(atom_distances))
 
-def exec2(df1_rel, df2_rel):
+def exec2(df1_rel, df2_rel, pdb_file):
     if len(df1_rel) > 0:
         mol_atom_a = df1_rel['Donor'][0].split('@')[1]
         residue = df1_rel['Acceptor'][0].split('@')[0]
@@ -285,8 +296,9 @@ def exec2(df1_rel, df2_rel):
             else:
                 atom_names.pop(np.argmin(atom_distances))
                 atom_distances.pop(np.argmin(atom_distances))
+
 #centroid search
-def exec3():
+def exec3(pdb_file):
     atom_names, atom_distances = centroid_search()
     ca_names, ca_locs = find_ca_atoms()
     for j in range(len(atom_names)):
@@ -357,14 +369,15 @@ def exec3():
             atom_names.pop(np.argmin(atom_distances))
             atom_distances.pop(np.argmin(atom_distances))
 
-def find_neighbors(mol, loc='setup/lig_tleap.mol2'):
+#########Functions#########
+
+def find_neighbors(mol):
     #Return atom numbers via connectivity of mol2 file
     #input: string mol ('C4'), string test_loc (path to file)
     #returns: string list containing indices of neighbors
-
     atom_num_found = False
     atomn_neighbors = []
-    with open(loc, 'r') as ligand:
+    with open(ligand_file, 'r') as ligand:
         for line in ligand:
             if '@<TRIPOS>SUBSTRUCTURE' in line:
                 break
@@ -388,7 +401,7 @@ def find_neighbors(mol, loc='setup/lig_tleap.mol2'):
     ligand.close()
     return atomn_neighbors
 
-def find_hydrogen_neighbor(moln_list, mol, loc='setup/lig_tleap.mol2'):
+def find_hydrogen_neighbor(moln_list, mol):
     #If terminal, returns bound heavy atom. Else returns self
     #input: String List moln_list, contains indices of hydrogen neighbors;
     #       String mol, molecule name ('H8')
@@ -400,7 +413,7 @@ def find_hydrogen_neighbor(moln_list, mol, loc='setup/lig_tleap.mol2'):
 
     atom_neighbors=[]
     for item in moln_list:
-        with open(loc, 'r') as ligand:
+        with open(ligand_file, 'r') as ligand:
             start_checking = False
             for line in ligand:
                 if '@<TRIPOS>BOND' in line:
@@ -428,14 +441,14 @@ def find_hydrogen_neighbor(moln_list, mol, loc='setup/lig_tleap.mol2'):
                 if not 'H' in atom:
                     return atom
 
-def neighbor_names(moln_list, loc='setup/lig_tleap.mol2'):
+def neighbor_names(moln_list):
     #Return atom names of heavy atom neighbors
     #input: String moln_list, contains indices of neighbors
     #returns: String List, names of neighbors
 
     atom_neighbors=[]
     for item in moln_list:
-        with open(loc, 'r') as ligand:
+        with open(ligand_file, 'r') as ligand:
             start_checking = False
             for line in ligand:
                 if '@<TRIPOS>BOND' in line:
@@ -476,12 +489,12 @@ def process_mol_atom_a(atom):
         neighbors_neighbors_number.append(nnn_num)
     return n_names, neighbors_neighbors_names 
 
-def find_location(atom, loc='complex-repres.pdb'):
+def find_location(atom):
     #input: String atom ('C4')
     #returns: Tuple (float, float, float) xyz location of atom
     #Assumes that the ligand is the first residue.
     #Should fail if gets to second residue without finding name
-    with open(loc, 'r') as ligand:
+    with open(pdb_file, 'r') as ligand:
         for line in ligand:
             line = line.split(' ')
             while '' in line:
@@ -490,7 +503,7 @@ def find_location(atom, loc='complex-repres.pdb'):
                 return (float(line[5]), float(line[6]), float(line[7]))
     raise Exception("location not found")
 
-def find_residue_loc(residue, loc='complex-repres.pdb'):
+def find_residue_loc(residue):
     #input: String residue, acceptor from BB.avg.data or BB2.avg.data (GLN_103@OE1)
     #returns: Tuple (Tuple (float, float, float), Tuple (float, float, float)) xyz location of residue
     #         OR None if N, C, CA molecules not found in the group
@@ -500,7 +513,7 @@ def find_residue_loc(residue, loc='complex-repres.pdb'):
         residue = residue[:residue.find('@')]
     
     res_name, res_number = residue.split('_')
-    with open(loc, 'r') as protein:
+    with open(pdb_file, 'r') as protein:
         has_N = False
         has_C = False
         has_CA = False
@@ -657,10 +670,10 @@ def choose_neighbors(res_loc, res_loc_2, mol_atom_a, n_names, neighbors_neighbor
 
 
 
-def centroid_search(loc='complex-repres.pdb'):
+def centroid_search():
     #returns: Tuple, tuple[0] is list of atom names excluding hydrogen, 
     #                tuple[1] is list of respective atom distances from centroid
-    ligand=open(loc, 'r')
+    ligand=open(pdb_file, 'r')
     start = False
     xs=[]
     ys=[]
@@ -681,7 +694,7 @@ def centroid_search(loc='complex-repres.pdb'):
     centroid=(sum(xs)/len(xs),sum(ys)/len(ys),sum(zs)/len(zs))
     atom_names = []
     distances = []
-    with open(loc, 'r') as l:
+    with open(pdb_file, 'r') as l:
         start_finding = False
         for line in l:
             if 'TER' in line and start_finding:
@@ -700,12 +713,12 @@ def centroid_search(loc='complex-repres.pdb'):
                 start_finding = True
     return atom_names, distances
     
-def find_ca_atoms(loc='complex-repres.pdb'):
+def find_ca_atoms():
     #returns: Tuple, tuple[0] is list of atom names (CA only),
     #                tuple[1] is list of respective atom locations
     ca_names = []
     ca_locs = []
-    with open(loc, 'r') as f:
+    with open(pdb_file, 'r') as f:
         first_ter = False
         for line in f:
             if 'TER' in line and first_ter:
@@ -721,12 +734,12 @@ def find_ca_atoms(loc='complex-repres.pdb'):
                 first_ter = True
     return ca_names, ca_locs
 
-def find_backbone_atoms(loc='complex-repres.pdb'):
+def find_backbone_atoms():
     #returns: Tuple, tuple[0] is list of atom names (N, C, or CA),
     #                tuple[1] is list of respective atom locations
     backbone_names = []
     backbone_locs = []
-    with open(loc, 'r') as f:
+    with open(pdb_file, 'r') as f:
         first_ter = False
         for line in f:
             if 'TER' in line and first_ter:
