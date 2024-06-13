@@ -5,6 +5,8 @@ import math
 
 #########Execution#########
 def execute(frac, bb='md-complex/BB.avg.dat', bb2='md-complex/BB2.avg.dat', ligand='setup/lig_tleap.mol2', pdb='complex-repres.pdb'):
+    
+    #establish global file paths
     global bb_file
     bb_file = bb
     global bb2_file
@@ -13,14 +15,11 @@ def execute(frac, bb='md-complex/BB.avg.dat', bb2='md-complex/BB2.avg.dat', liga
     ligand_file = ligand
     global pdb_file
     pdb_file = pdb
+
     df1 = pd.read_csv(bb_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
     df2 = pd.read_csv(bb2_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
     df1_rel=df1[df1['Frac'] >= float(frac)]
     df2_rel=df2[df2['Frac'] >= float(frac)]
-
-
-
-    # ligand=open('setup/lig_tleap.mol2', 'r')
 
     #check for multiple options. Only one is executed.
     if len(df1_rel) + len(df2_rel) > 1:
@@ -30,7 +29,6 @@ def execute(frac, bb='md-complex/BB.avg.dat', bb2='md-complex/BB2.avg.dat', liga
     #centroid search
     else:
         exec3(pdb_file)
-
 
 def exec1(df1_rel, df2_rel, ligand_file, pdb_file):
     ligand=open(ligand_file, 'r')
