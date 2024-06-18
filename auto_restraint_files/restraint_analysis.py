@@ -17,7 +17,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-    print('asdf', args.frac)
     frac = float(args.frac)
     bb = args.bb
     bb2 = args.bb2
