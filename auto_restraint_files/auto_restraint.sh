@@ -9,8 +9,6 @@
 # -L: ligand file
 # -P: pdb file
 
-#above flag parameters come first, then the directory parameter (../lysozyme_test_case_restraints)
-
 #default values
 topology_file="complex.prmtop"
 trajectory_file="nvt-7ns.nc"
