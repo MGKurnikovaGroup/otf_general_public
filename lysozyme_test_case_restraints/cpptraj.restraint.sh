@@ -1,15 +1,26 @@
 #!/bin/bash
-
-myframe=$(awk '{print $6}' rmsd-avglig.avg | tail -n 1)
-echo $myframe
-
-myframe2=$((myframe + 200))
-echo $myframe2
-
-#Needs to be updated for protein ligand residue numbering general
 cd md-complex
-cpptraj -p complex.prmtop <<END
-        trajin nvt-7ns.nc $myframe $myframe2
-	hbond Backbone2 acceptormask :MOL donormask :2-357 avgout BB2.avg.dat series uuseries bbhbond.gnu
+
+while getopts "P:t:l:r:" opt; do
+  case $opt in
+    P) 
+        topology_file="$OPTARG";;
+    t) 
+        trajectory_file="$OPTARG";;
+    l) 
+        ligand_res_name="$OPTARG";;
+    r)
+        protein_res_id="$OPTARG";;
+  esac
+done
+echo "topology_file = $topology_file"
+echo "trajectory_file = $trajectory_file"
+echo "ligand_res_name = $ligand_res_name"
+echo "protein_res_id = $protein_res_id"
+cpptraj -p "$topology_file" <<END
+        trajin "$trajectory_file" 201
+	hbond Backbone2 acceptormask ":$ligand_res_name" donormask ":$protein_res_id" avgout BB2.avg.dat series uuseries bbhbond.gnu
 	hbond Backbone donormask :MOL acceptormask :2-357 avgout BB.avg.dat series uuseries bbhbond.gnu
 	run
+	quit
+cd ..

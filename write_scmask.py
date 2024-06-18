@@ -45,6 +45,12 @@ def write_mask(filename, scmask1, scmask2):
 for i in range(min(len(lig1), len(lig2))):
     #print(abs_diff_xyz(lig1[i],lig2[i]))
     # add atoms which differ in XYZ to scmask_temp
+    if (lig1[i][0] == 'TER') or (lig2[i][0] == 'TER'):
+        if (lig1[i][0] == 'TER') and (lig2[i][0] != 'TER'):
+            scmask_temp2.append(lig2[i][2])
+        elif (lig1[i][0] != 'TER') and (lig2[i][0] == 'TER'):
+            scmask_temp1.append(lig1[i][2])
+        continue
     if abs_diff_xyz(lig1[i],lig2[i]) >= 0.1:
         scmask_temp1.append(lig1[i][2])
         scmask_temp2.append(lig2[i][2])
@@ -61,11 +67,13 @@ for i in range(min(len(lig1), len(lig2))):
 # add last atoms of the largest ligand to scmask
 if len(lig1)-len(lig2) < 0:
     for i in range(len(lig1),len(lig2)):
-        scmask_temp2.append(lig2[i][2])
+        if not (lig2[i][0] == 'TER'):
+            scmask_temp2.append(lig2[i][2])
                
 if len(lig1)-len(lig2) > 0:
     for i in range(len(lig2),len(lig1)):
-        scmask_temp1.append(lig1[i][2])    
+        if not (lig1[i][0] == 'TER'):
+            scmask_temp1.append(lig1[i][2])    
 
 #print(scmask_temp1, "\n", scmask_temp2)
 
@@ -93,9 +101,10 @@ for i in range(len(scmask_clean1)):
     for j in range(len(scmask_clean2)):
         for k in lig2:
             if k[2] == scmask_clean2[j]:
+                print(k)
                 coord2=(float(k[5]),float(k[6]),float(k[7]))
                 break
-        if math.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2+(coord1[2]-coord1[2])**2)<.1:
+        if math.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2+(coord1[2]-coord1[2])**2)<.01:
             remove_mask1.append(i)
             remove_mask2.append(j)
             break
