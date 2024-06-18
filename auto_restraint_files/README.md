@@ -12,10 +12,15 @@ cd auto_restraint_files
 -p: topology file
 
 -t: trajectory file
+
 -l: ligand residue name
+
 -r: protein residue id
+
 -f: fraction cutoff
+
 -L: ligand file
+
 -P: pdb file
 
 ### Default files:
