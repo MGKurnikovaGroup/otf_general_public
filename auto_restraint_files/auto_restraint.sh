@@ -64,6 +64,5 @@ do
 	    cp ../auto_restraint_files/* .
         ./cpptraj.restraint.sh -P "$topology_file" -t "$trajectory_file" -l "$ligand_res_name" -r "$protein_res_id"
         python3 restraint_analysis.py "$fraction_cutoff" md-complex/BB.avg.dat md-complex/BB2.avg.dat "$ligand_file" "$pdb_file"
-        cd ..
 done
 
