@@ -3,7 +3,8 @@
 # -p: topology file
 # -t: trajectory file
 # -l: ligand residue name
-# -r: protein residue id
+# -s: protein residue id start
+# -e: protein residue id end
 # -f: fraction cutoff
 # -L: ligand file
 # -P: pdb file
@@ -61,7 +62,11 @@ do
         echo =====  $X  =======================
         
         cd $X
-	    cp ../auto_restraint_files/* .
+	    cp ../auto_restraint_files/auto_restraint.sh .
+        cp ../auto_restraint_files/cpptraj.restraint.sh .
+        cp ../auto_restraint_files/restraint_analysis.py .
+        cp ../auto_restraint_files/restraint_analysis_functions.py .
         python3 restraint_analysis.py "$fraction_cutoff" md-complex/BB.avg.dat md-complex/BB2.avg.dat "$ligand_file" "$pdb_file"
+        echo =====  $X  Done =======================
 done
 
