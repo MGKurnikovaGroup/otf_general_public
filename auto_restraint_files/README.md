@@ -15,7 +15,9 @@ cd auto_restraint_files
 
 -l: ligand residue name
 
--r: protein residue id
+-s: protein residue id start of range
+
+-e: protein residue id end of range
 
 -f: fraction cutoff
 
@@ -45,5 +47,5 @@ pdb_file="complex-repres.pdb"
 
 ```
 cd auto_restraint_files
-./auto_restraint.sh -L setup/lig_tleap.mol2 -P complex-repres.pdb -f 0.5 ../lysozyme_test_case_restraints ../dir2
+./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 357 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb ../lysozyme_test_case_restraints ../dir2 ../dir3
 ```

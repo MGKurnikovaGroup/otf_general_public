@@ -3,7 +3,8 @@
 # -p: topology file
 # -t: trajectory file
 # -l: ligand residue name
-# -r: protein residue id
+# -s: protein residue id start
+# -e: protein residue id end
 # -f: fraction cutoff
 # -L: ligand file
 # -P: pdb file
