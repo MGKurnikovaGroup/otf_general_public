@@ -10,6 +10,7 @@ cd auto_restraint_files
 ### Options:
 
 -p: topology file
+
 -t: trajectory file
 -l: ligand residue name
 -r: protein residue id
