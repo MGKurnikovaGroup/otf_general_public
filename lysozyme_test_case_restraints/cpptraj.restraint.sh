@@ -13,10 +13,7 @@ while getopts "P:t:l:r:" opt; do
         protein_res_id="$OPTARG";;
   esac
 done
-echo "topology_file = $topology_file"
-echo "trajectory_file = $trajectory_file"
-echo "ligand_res_name = $ligand_res_name"
-echo "protein_res_id = $protein_res_id"
+
 cpptraj -p "$topology_file" <<END
         trajin "$trajectory_file" 201
 	hbond Backbone2 acceptormask ":$ligand_res_name" donormask ":$protein_res_id" avgout BB2.avg.dat series uuseries bbhbond.gnu
