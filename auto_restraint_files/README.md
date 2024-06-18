@@ -1,13 +1,13 @@
-#auto_restraint
+# auto_restraint
 
-##Usage:
+## Usage:
 
 ```
 cd auto_restraint_files
 ./auto_restraint.sh <options> <directories>
 ```
 
-###Options:
+### Options:
 
 -p: topology file
 -t: trajectory file
@@ -17,7 +17,7 @@ cd auto_restraint_files
 -L: ligand file
 -P: pdb file
 
-###Default files:
+### Default files:
 
 topology_file="complex.prmtop"
 trajectory_file="nvt-7ns.nc"
@@ -28,3 +28,9 @@ fraction_cutoff="0.5"
 ligand_file="setup/lig_tleap.mol2"
 pdb_file="complex-repres.pdb"
 
+### Example:
+
+```
+cd auto_restraint_files
+./auto_restraint.sh -L setup/lig_tleap.mol2 -P complex-repres.pdb -f 0.5 ../lysozyme_test_case_restraints ../dir2
+```
