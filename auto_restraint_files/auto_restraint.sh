@@ -14,13 +14,14 @@
 topology_file="complex.prmtop"
 trajectory_file="nvt-7ns.nc"
 ligand_res_name="MOL"
-protein_res_id="2-357"
+protein_res_id_start="2"
+protein_res_id_end="357"
 fraction_cutoff="0.5"
 ligand_file="setup/lig_tleap.mol2"
 pdb_file="complex-repres.pdb"
 
 #process parameters
-while getopts "p:t:l:r:f:L:P:" opt; do
+while getopts "p:t:l:s:e:f:L:P:" opt; do
   case $opt in
     p) 
         topology_file="$OPTARG";;
@@ -28,8 +29,10 @@ while getopts "p:t:l:r:f:L:P:" opt; do
         trajectory_file="$OPTARG";;
     l) 
         ligand_res_name="$OPTARG";;
-    r)
-        protein_res_id="$OPTARG";;
+    s)
+        protein_res_id_start="$OPTARG";;
+    e) 
+        protein_res_id_end="$OPTARG";;
     f)
         fraction_cutoff="$OPTARG";;
     L)
@@ -38,6 +41,8 @@ while getopts "p:t:l:r:f:L:P:" opt; do
         pdb_file="$OPTARG";;
   esac
 done
+
+protein_res_id="$protein_res_id_start-$protein_res_id_end"
 
 #confirm to user the parameters
 echo "topology_file = $topology_file"
