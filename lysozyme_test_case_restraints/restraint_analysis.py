@@ -9,7 +9,7 @@ def main(frac, bb, bb2, ligand, pdb):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process some data.")
     
-    parser.add_argument('frac', type=float, help="cutoff fraction")
+    parser.add_argument('frac', type=str, help="cutoff fraction")
     parser.add_argument('bb', type=str, help="BB file")
     parser.add_argument('bb2', type=str, help="BB2 file")
     parser.add_argument('ligand', type=str, help="ligand file")
@@ -17,7 +17,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-    frac = args.frac
+    print('asdf', args.frac)
+    frac = float(args.frac)
     bb = args.bb
     bb2 = args.bb2
     ligand = args.ligand
