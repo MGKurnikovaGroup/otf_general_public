@@ -177,35 +177,35 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
     
     #Run TI
     os.chdir('rtr')
-    if True:
-        if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-            subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt')) #Script needs to be updated
-    
-        #Analyze data, restart simulation if necessary
-        counter = 0
-        if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
-            counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
-        rtr_data =ct.analyze_rtr(lam, decorrelate=True)
-        while (not ct.check_convergence(rtr_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(rtr_data) <= 50:
-            #Currently allows 8 restarts (4ns extra)
-            #Requires 50 samples to continue
-            #restart_lam.sh first argument: lamdba window
-            #2nd argument: Suffix of new .out file
-            #3rd: sufficx of restart file to use
-            print('Beginning restart '+str(counter+1))
-            counter_remainder = counter % 10
-            counter_quotient = counter // 10
-            if counter_remainder == 9:
-                update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
-                        str(counter + 1), nstlim=additional_time)
-                subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-            else:
-                update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
-                        str(counter_quotient)+str(counter_remainder+1), nstlim=additional_time)
-                subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-            counter += 1
-            rtr_data=ct.analyze_rtr(lam, decorrelate=True)
-            if counter >= math.floor((max_time_2-initial_time)/additional_time):
-                break
-        os.chdir('..')
+
+    if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
+        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt')) #Script needs to be updated
+
+    #Analyze data, restart simulation if necessary
+    counter = 0
+    if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
+        counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
+    rtr_data =ct.analyze_rtr(lam, decorrelate=True)
+    while (not ct.check_convergence(rtr_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(rtr_data) <= 50:
+        #Currently allows 8 restarts (4ns extra)
+        #Requires 50 samples to continue
+        #restart_lam.sh first argument: lamdba window
+        #2nd argument: Suffix of new .out file
+        #3rd: sufficx of restart file to use
+        print('Beginning restart '+str(counter+1))
+        counter_remainder = counter % 10
+        counter_quotient = counter // 10
+        if counter_remainder == 9:
+            update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
+                    str(counter + 1), nstlim=additional_time)
+            subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
+        else:
+            update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
+                    str(counter_quotient)+str(counter_remainder+1), nstlim=additional_time)
+            subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
+        counter += 1
+        rtr_data=ct.analyze_rtr(lam, decorrelate=True)
+        if counter >= math.floor((max_time_2-initial_time)/additional_time):
+            break
+    os.chdir('..')
 
