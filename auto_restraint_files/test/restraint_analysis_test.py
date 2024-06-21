@@ -19,7 +19,7 @@ def truncate_to_three_decimals(number):
         return f"{integer_part}.{truncated_decimal_part}"
     else:
         return str_num
-#make the above functino generalizable to any number of decimals
+    
 def truncate_to_n_decimals(number, n):
     str_num = str(number)
     if '.' in str_num:
