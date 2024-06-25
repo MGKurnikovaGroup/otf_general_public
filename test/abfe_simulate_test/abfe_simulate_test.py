@@ -3,12 +3,15 @@ import os
 import pytest
 from pathlib import Path
 
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, parent_dir)
+# parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# sys.path.insert(0, parent_dir)
+
+
+root_dir = str(Path(__file__).resolve().parent.parent.parent)
+
+sys.path.insert(0, str(root_dir))
 
 from abfe_simulate import *
-
-root_dir = str(Path(__file__).resolve().parent.parent)
 
 ###################Helper Functions####################
 
@@ -24,10 +27,10 @@ def read_file(file):
 
 #update_input
 def test_update_input():
-    input_file = root_dir + '/test/abfe_simulate_test_files/1min.in'
-    input_file_2 = root_dir + '/test/abfe_simulate_test_files/prod.in'
-    updated_file = root_dir + '/test/abfe_simulate_test_files/updated_1min.in'
-    updated_file_2 = root_dir + '/test/abfe_simulate_test_files/updated_prod.in'
+    input_file = root_dir + '/test/abfe_simulate_test/1min.in'
+    input_file_2 = root_dir + '/test/abfe_simulate_test/prod.in'
+    updated_file = root_dir + '/test/abfe_simulate_test/updated_1min.in'
+    updated_file_2 = root_dir + '/test/abfe_simulate_test/updated_prod.in'
     clear_file(updated_file)
     
     assert('clambda = x' in read_file(input_file))
@@ -46,8 +49,8 @@ def test_update_input():
 
 #update_input_rtr
 def test_update_input_rtr():
-    input_file = root_dir + '/test/abfe_simulate_test_files/rtr_prod.in'
-    updated_file = root_dir + '/test/abfe_simulate_test_files/updated_rtr_prod.in'
+    input_file = root_dir + '/test/abfe_simulate_test/rtr_prod.in'
+    updated_file = root_dir + '/test/abfe_simulate_test/updated_rtr_prod.in'
     
     clear_file(updated_file)
     
@@ -70,9 +73,42 @@ def test_update_input_rtr():
     print('update_input_rtr passed')
 
 def test_gen_k():
-    #add write location as a generalizable parameter to gen_k for testing purposes
+
+    rst = open('k.RST')
+    rst_rk2 = []
+    for line in rst:
+        for s in line.split(", "):
+            if "rk2" in s:
+                rst_rk2.append(s)
+
+    gen_k(0.5)
+
+    test1 = open('rtr/k-la-0.5.RST')
+    test1_rk2 = []
+    for line in test1:
+        for s in line.split(", "):
+            if "rk2" in s:
+                test1_rk2.append(s)
+
+    for i in range(len(rst_rk2)):
+        assert(float(test1_rk2[i][4:]) == 0.5 * float(rst_rk2[i][4:]))
+    
+    gen_k(0.25)
+    test2 = open('rtr/k-la-0.25.RST')
+    test_rk2 = []
+    for line in test2:
+        for s in line.split(", "):
+            if "rk2" in s:
+                test_rk2.append(s)
+
+    for i in range(len(rst_rk2)):
+        assert(float(test_rk2[i][4:]) == 0.25 * float(rst_rk2[i][4:]))
+    print('gen_k passed')
+        
+def test_process_lam():
     pass
 
 ###################Run####################
 test_update_input()
 test_update_input_rtr()
+test_gen_k()
