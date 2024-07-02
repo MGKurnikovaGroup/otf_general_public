@@ -9,7 +9,7 @@ from pathlib import Path
 
 root_dir = str(Path(__file__).resolve().parent.parent.parent)
 
-sys.path.insert(0, str(root_dir))
+sys.path.insert(0, str(root_dir)+"/abfe")
 
 from abfe_simulate import *
 

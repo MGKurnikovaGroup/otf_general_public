@@ -369,10 +369,13 @@ def exec3(pdb_file):
 
 #########Functions#########
 
-def find_neighbors(mol):
+def find_neighbors(mol, test_loc=''):
     #Return atom numbers via connectivity of mol2 file
     #input: string mol ('C4'), string test_loc (path to file)
     #returns: string list containing indices of neighbors
+    if test_loc != '':
+        ligand_file = test_loc
+
     atom_num_found = False
     atomn_neighbors = []
     with open(ligand_file, 'r') as ligand:
@@ -399,7 +402,7 @@ def find_neighbors(mol):
     ligand.close()
     return atomn_neighbors
 
-def find_hydrogen_neighbor(moln_list, mol):
+def find_hydrogen_neighbor(moln_list, mol, test_loc=''):
     #If terminal, returns bound heavy atom. Else returns self
     #input: String List moln_list, contains indices of hydrogen neighbors;
     #       String mol, molecule name ('H8')
@@ -408,7 +411,8 @@ def find_hydrogen_neighbor(moln_list, mol):
     #          moln_list contains neighbors to mol
 
     #bug: if mol not in moln_list, still returns mol
-
+    if test_loc != '':
+        ligand_file = test_loc
     atom_neighbors=[]
     for item in moln_list:
         with open(ligand_file, 'r') as ligand:
@@ -439,11 +443,13 @@ def find_hydrogen_neighbor(moln_list, mol):
                 if not 'H' in atom:
                     return atom
 
-def neighbor_names(moln_list):
+def neighbor_names(moln_list, test_loc=''):
     #Return atom names of heavy atom neighbors
     #input: String moln_list, contains indices of neighbors
     #returns: String List, names of neighbors
-
+    if test_loc != '':
+        ligand_file = test_loc
+    
     atom_neighbors=[]
     for item in moln_list:
         with open(ligand_file, 'r') as ligand:
@@ -487,11 +493,15 @@ def process_mol_atom_a(atom):
         neighbors_neighbors_number.append(nnn_num)
     return n_names, neighbors_neighbors_names 
 
-def find_location(atom):
+def find_location(atom, test_loc=''):
     #input: String atom ('C4')
     #returns: Tuple (float, float, float) xyz location of atom
     #Assumes that the ligand is the first residue.
     #Should fail if gets to second residue without finding name
+
+    if test_loc != '':
+        pdb_file = test_loc
+
     with open(pdb_file, 'r') as ligand:
         for line in ligand:
             line = line.split(' ')
@@ -501,11 +511,14 @@ def find_location(atom):
                 return (float(line[5]), float(line[6]), float(line[7]))
     raise Exception("location not found")
 
-def find_residue_loc(residue):
+def find_residue_loc(residue, test_loc=''):
     #input: String residue, acceptor from BB.avg.data or BB2.avg.data (GLN_103@OE1)
     #returns: Tuple (Tuple (float, float, float), Tuple (float, float, float)) xyz location of residue
     #         OR None if N, C, CA molecules not found in the group
 
+    if test_loc != '':
+        pdb_file = test_loc
+        
     #dispose of the molecule name (@ and to the right)
     if residue.find('@') != -1:
         residue = residue[:residue.find('@')]
@@ -668,9 +681,12 @@ def choose_neighbors(res_loc, res_loc_2, mol_atom_a, n_names, neighbors_neighbor
 
 
 
-def centroid_search():
+def centroid_search(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names excluding hydrogen, 
     #                tuple[1] is list of respective atom distances from centroid
+    if test_loc != '':
+        pdb_file = test_loc
+
     ligand=open(pdb_file, 'r')
     start = False
     xs=[]
@@ -711,9 +727,12 @@ def centroid_search():
                 start_finding = True
     return atom_names, distances
     
-def find_ca_atoms():
+def find_ca_atoms(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names (CA only),
     #                tuple[1] is list of respective atom locations
+    if test_loc != '':
+        pdb_file = test_loc
+
     ca_names = []
     ca_locs = []
     with open(pdb_file, 'r') as f:
@@ -732,9 +751,12 @@ def find_ca_atoms():
                 first_ter = True
     return ca_names, ca_locs
 
-def find_backbone_atoms():
+def find_backbone_atoms(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names (N, C, or CA),
     #                tuple[1] is list of respective atom locations
+    if test_loc != '':
+        pdb_file = test_loc
+
     backbone_names = []
     backbone_locs = []
     with open(pdb_file, 'r') as f:

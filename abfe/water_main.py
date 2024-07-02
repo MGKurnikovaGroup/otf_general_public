@@ -1,5 +1,6 @@
 import abfe_simulate as abfe
 import argparse
+import numpy as np
 
 # constants
 temp=300.0
@@ -22,14 +23,23 @@ parser.add_argument('--custom_windows', type=str, default=None, help='list of la
 
 args=parser.parse_args()
 
-#equal, Gaussian, custom (schedule)
+#schedule: equal, gaussian, custom, throw error otherwise
+if args.schedule.lower() == 'equal':
+    lambdas = [i/args.num_windows for i in range(args.num_windows)]
+elif args.schedule.lower() == 'gaussian':
+    lambdas = [0.5 * (1 - np.cos(np.pi * i / args.num_windows)) for i in range(args.num_windows)]
+elif args.schedule.lower() == 'custom':
+    lambdas = [float(i) for i in args.custom_windows.split(',')]
+else:
+    raise ValueError('schedule must be equal, gaussian, or custom')
+
+print(lambdas)
 
 #rtr can only be custom
 
 
-
 #Initial Simulations at lambda = [.3, .5, .7]
-for l in [.025,.05,0.1,.15, 0.2,.25, 0.3, 0.4, 0.5, 0.6, 0.7,.75, 0.8,.85, 0.9,.95, .975]:
-    abfe.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.sec_max)
+# for l in lambdas:
+#     abfe.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.sec_max)
 
 
