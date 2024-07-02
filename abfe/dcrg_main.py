@@ -18,6 +18,8 @@ t_eq = 250 # equilibration time in frames (each frame = 2 ps)
 
 
 
+
+
 #Initial Simulations at lambda = [.3, .5, .7]
 for l in [.025,.05,0.1,.15, 0.2,.25, 0.3, 0.4, 0.5, 0.6, 0.7,.75, 0.8,.85, 0.9,.95, .975]:
     abfe.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.sec_max)
