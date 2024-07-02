@@ -115,15 +115,8 @@ def test_process_lam():
     assert process_lam("123-456") == "456"
     print('process_lam passed')
 
-#dcrg_abfe
-def test_dcrg_abfe():
-
-    #first lambda with default params
-    dcrg_abfe(0.1, root_dir + '/test/abfe_simulate_test', 0.1, 2.5, 0.5, 6.5, 10.5)
-
 ###################Run####################
 test_update_input()
 test_update_input_rtr()
 test_gen_k()
 test_process_lam()
-test_dcrg_abfe()

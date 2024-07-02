@@ -15,7 +15,18 @@ parser.add_argument('--initial_time', type=float, default=2.5, help='initial sim
 parser.add_argument('--additional_time', type=float, default=0.5, help='simulation time of additional runs in ns')
 parser.add_argument('--first_max', type=float, default=6.5, help='first maximum amount of simulation time')
 parser.add_argument('--sec_max', type=float, default=10.5, help='second maximum amount of simulation time')
+
+parser.add_argument('--schedule', type=str, default='equal', help='schedule for lambda windows')
+parser.add_argument('--num_windows', type=int, default=10, help='number of lambda windows')
+parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda windows')
+
 args=parser.parse_args()
+
+#equal, Gaussian, custom (schedule)
+
+#rtr can only be custom
+
+
 
 #Initial Simulations at lambda = [.3, .5, .7]
 for l in [.025,.05,0.1,.15, 0.2,.25, 0.3, 0.4, 0.5, 0.6, 0.7,.75, 0.8,.85, 0.9,.95, .975]:
