@@ -52,6 +52,10 @@ elif args.type == 'water':
 elif args.type == 'rtr':
     for l in lambdas:
         abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max)
-
+elif args.type == 'all':
+    for l in lambdas:
+        abfe_simulate.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max)
+        abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max)
+        abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max)
 else:
     raise ValueError('type must be dcrg, water, or rtr')

@@ -38,6 +38,7 @@ additional_time=0.5
 first_max=6.5
 second_max=10.5
 schedule='equal'
+move_to=.
 
 #process parameters
 while [[ $# -gt 0 ]]; do
@@ -64,6 +65,10 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-S|--schedule)
 			schedule="$2"
+			shift 2
+			;;
+		-m|--move-to)
+			move_to="$2"
 			shift 2
 			;;
         -h|--help)
@@ -97,15 +102,13 @@ echo "schedule = $schedule"
 echo "type = $type"
 echo "directories = $@"
 echo "otf_general directory: $mypcl"
+echo "moving to: $move_to"
 
 for X in "$@"
 do
 	echo =====  $X  =======================
 	cd $X
 	cp $mypcl/*.py .
-	# python3 dcrg_main.py $mypcl --initial_time 0.5 --additional_time 0.25
-	# python3 rtr_main.py $mypcl --initial_time 0.5 --additional_time 0.25
-	# python3 water_main.py $mypcl --initial_time 0.5 --additional_time 0.25
 	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule"
 	cd ..
 	mv $X ~/trajectories2/ALK2/fifth
