@@ -1,11 +1,11 @@
 #!/bin/bash
 mywd=$(pwd)
 
-#Loop to find otf_general absolute path
+#Loop to find otf_abfe absolute path
 current_dir=$(pwd)
 while [ "$current_dir" != "/" ]; do
-    if [ -d "$current_dir/otf_general" ]; then
-        mypcl="$current_dir/otf_general"
+    if [ -d "$current_dir/otf_abfe" ]; then
+        mypcl="$current_dir/otf_abfe"
         break
     fi
     parent_dir=$(dirname "$current_dir")
@@ -13,7 +13,7 @@ while [ "$current_dir" != "/" ]; do
 done
 
 if [ "$current_dir" == "/" ]; then
-    echo "Directory 'otf_general' not found."
+    echo "Directory 'otf_abfe' not found."
 fi
 
 show_help() {
@@ -115,7 +115,7 @@ echo "num_windows = $num_windows"
 echo "custom_windows = $custom_windows"
 echo "type = $type"
 echo "directories = $@"
-echo "otf_general directory: $mypcl"
+echo "otf_abfe directory: $mypcl"
 echo "moving to: $move_to"
 
 for X in "$@"
