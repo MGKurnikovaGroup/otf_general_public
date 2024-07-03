@@ -111,5 +111,5 @@ do
 	cp $mypcl/*.py .
 	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule"
 	cd ..
-	mv $X ~/trajectories2/ALK2/fifth
+	mv $X "$move_to"
 done
