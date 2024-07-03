@@ -17,7 +17,7 @@ if [ "$current_dir" == "/" ]; then
 fi
 
 show_help() {
-    echo "Usage: $0 [OPTIONS] [type: dcrg, water, rtr] dir1 dir2 ... dirN"
+    echo "Usage: $0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN"
     echo "Options:"
     echo "  -c, --convergence-cutoff VALUE   Set convergence cutoff"
     echo "  -i, --initial-time VALUE         Set initial time"
@@ -25,6 +25,9 @@ show_help() {
     echo "  -f, --first-max VALUE            Set first max value"
     echo "  -s, --second-max VALUE           Set second max value"
     echo "  -S, --schedule VALUE             Set schedule"
+	echo "  -n, --num-windows VALUE          Set number of windows"
+	echo "  -C, --custom-windows VALUE       Set custom windows"
+	echo "  -m, --move-to VALUE              Set destination directory"
     echo "  -h, --help                       Show this help message and exit"
 
 }
@@ -38,6 +41,7 @@ additional_time=0.5
 first_max=6.5
 second_max=10.5
 schedule='equal'
+num_windows=10
 move_to=.
 
 #process parameters
@@ -65,6 +69,14 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-S|--schedule)
 			schedule="$2"
+			shift 2
+			;;
+		-n|--num-windows)
+			num_windows="$2"
+			shift 2
+			;;
+		-C|--custom-windows)
+			custom_windows="$2"
 			shift 2
 			;;
 		-m|--move-to)
@@ -99,6 +111,8 @@ echo "additional_time = $additional_time"
 echo "first_max = $first_max"
 echo "second_max = $second_max"
 echo "schedule = $schedule"
+echo "num_windows = $num_windows"
+echo "custom_windows = $custom_windows"
 echo "type = $type"
 echo "directories = $@"
 echo "otf_general directory: $mypcl"
@@ -109,7 +123,7 @@ do
 	echo =====  $X  =======================
 	cd $X
 	cp $mypcl/*.py .
-	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule"
+	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows"
 	cd ..
 	mv $X "$move_to"
 done
