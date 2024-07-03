@@ -2,19 +2,20 @@
 mywd=$(pwd)
 
 #Loop to find otf_abfe absolute path
-current_dir=$(pwd)
-while [ "$current_dir" != "/" ]; do
-    if [ -d "$current_dir/otf_abfe" ]; then
-        mypcl="$current_dir/otf_abfe"
-        break
-    fi
-    parent_dir=$(dirname "$current_dir")
-    current_dir="$parent_dir"
-done
+# current_dir=$(pwd)
+# while [ "$current_dir" != "/" ]; do
+#     if [ -d "$current_dir/otf_abfe" ]; then
+#         mypcl="$current_dir/otf_abfe"
+#         break
+#     fi
+#     parent_dir=$(dirname "$current_dir")
+#     current_dir="$parent_dir"
+# done
 
-if [ "$current_dir" == "/" ]; then
-    echo "Directory 'otf_abfe' not found."
-fi
+# if [ "$current_dir" == "/" ]; then
+#     echo "Directory 'otf_abfe' not found."
+# fi
+mypcl=$(find ../ -type d -name "otf_abfe")
 
 show_help() {
     echo "Usage: $0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN"
