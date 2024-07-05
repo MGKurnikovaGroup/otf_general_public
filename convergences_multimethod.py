@@ -52,8 +52,6 @@ def parse_constants(lam, from_rtr=False):
     return istep1, ntpr, dt, nstlim
 
 
-
-#parse lists: untouched
 def parse_lists(from_rtr=False): 
     # Used for ABFE simulations, not important for RBFE
     
@@ -166,7 +164,7 @@ def integrated_autocorrelation_time_pymbar(data):
 def average_tau(tau_manual, tau_pymbar):
     return (tau_manual + tau_pymbar) / 2 #average tau between pymbar and manual as a fourth method 
 
-def calculate_errors(data, true_tau_int=None, method="pymbar", max_lag=100):
+def calculate_errors(data, true_tau_int=None, method="pymbar", max_lag=100): #calculating the errors for each method
     acf_manual = calculate_acf_manual(data, max_lag)
     tau_int_manual = integrated_autocorrelation_time_manual(acf_manual)
     tau_int_pymbar = integrated_autocorrelation_time_pymbar(data)
@@ -178,6 +176,8 @@ def calculate_errors(data, true_tau_int=None, method="pymbar", max_lag=100):
         block_size = int(true_tau_int)
         
     tau_int_block = calculate_tau_int_block(data, block_size)
+
+    #mean absolute erorrs 
     
     errors = {
         "block_averaging": {"MAE_g": np.mean(np.abs(tau_int_block - true_tau_int))} if true_tau_int else None,
@@ -186,7 +186,7 @@ def calculate_errors(data, true_tau_int=None, method="pymbar", max_lag=100):
         "average": {"MAE_g": np.mean(np.abs(tau_int_avg - true_tau_int))} if true_tau_int else None
     }
 
-    if method == "manual":
+    if method == "manual": #all the tau_int, acf 
         tau_int = tau_int_manual
     elif method == "block_averaging":
         tau_int = tau_int_block
@@ -216,27 +216,37 @@ def analyze(lam, decorrelate=False, method="pymbar"):
     auto_list = pymbar_timeseries.detect_equilibration(dHdl)
     dHdl_eq = dHdl[auto_list[0]:]
     if decorrelate:
-        dHdl_ssmp_indices = pymbar_timeseries.subsample_correlated_data(dHdl_eq, conservative=True)
-        dHdl_ssmp = dHdl_eq[dHdl_ssmp_indices]
+        # Use the specified method to calculate the autocorrelation time
+        if method == "manual":
+        acf = calculate_acf_manual(dHdl_ssmp, max_lag=100)
+        tau_int = integrated_autocorrelation_time_manual(acf)
+        dHdl_ssmp = subsample_data(dHdl_ssmp, tau_int) #This function subsamples the data based on the given autocorrelation time. It takes every tau_int-th element from the data
+        elif method == "block_averaging":
+            block_size = calculate_optimal_block_size(dHdl_ssmp)
+            tau_int = calculate_tau_int_block(dHdl_ssmp, block_size)
+            dHdl_ssmp = subsample_data(dHdl_ssmp, tau_int) #calls the subsample function for the indices 
+        elif method == "average":
+            acf = calculate_acf_manual(dHdl_ssmp, max_lag=100)
+            tau_int_manual = integrated_autocorrelation_time_manual(acf)
+            tau_int_pymbar = integrated_autocorrelation_time_pymbar(dHdl_ssmp)
+            tau_int = average_tau(tau_int_manual, tau_int_pymbar)
+            dHdl_ssmp = subsample_data(dHdl_ssmp, tau_int) #calls the subsample method for the indices 
+        else:  # default to pymbar   
+            dHdl_ssmp_indices = pymbar_timeseries.subsample_correlated_data(dHdl_eq, conservative=True) #uses pymbar to get split indices
+            dHdl_ssmp = dHdl_eq[dHdl_ssmp_indices]
     else:
         dHdl_ssmp = dHdl_eq
 
-    # Use the specified method to calculate the autocorrelation time
-    if method == "manual":
-        acf = calculate_acf_manual(dHdl_ssmp, max_lag=100)
-        tau_int = integrated_autocorrelation_time_manual(acf)
-    elif method == "block_averaging":
-        block_size = calculate_optimal_block_size(dHdl_ssmp)
-        tau_int = calculate_tau_int_block(dHdl_ssmp, block_size)
-    elif method == "average":
-        acf = calculate_acf_manual(dHdl_ssmp, max_lag=100)
-        tau_int_manual = integrated_autocorrelation_time_manual(acf)
-        tau_int_pymbar = integrated_autocorrelation_time_pymbar(dHdl_ssmp)
-        tau_int = average_tau(tau_int_manual, tau_int_pymbar)
-    else:  # default to pymbar
-        tau_int = integrated_autocorrelation_time_pymbar(dHdl_ssmp)
-
+ 
+    
     return dHdl_ssmp, tau_int
+
+def subsample_data(data, tau_int):#takes it as an np array and autocorrelation time and subsamples based off of that and the autocorrelation time should be rounded up
+    subsample_indices = np.arange(0, len(data), int(np.ceil(tau_int))) ## Generate indices for subsampling the data, starting at 0 and taking every ceil(tau_int)-th element
+
+    return data[subsample_indices]
+
+
 
 # Function to check convergence
 def check_convergence(sample, cutoff):
