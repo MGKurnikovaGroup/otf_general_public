@@ -127,4 +127,4 @@ do
 	python3 abfe_main.py "../$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows"
 	cd ..
 	mv $X "$move_to"
-done
+done 
