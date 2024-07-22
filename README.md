@@ -34,6 +34,20 @@ Options:
 | `-r`   | rtr window ([float],[float],[float],...)      |
 | `-m`   | destination directory (string of path name)   |
 
+Default values (if no input specified):
+
+| Option                | Default Value                   |
+|-----------------------|---------------------------------|
+| `convergence_cutoff`  | `0.1`                           |
+| `initial_time`        | `2.5`                           |
+| `additional_time`     | `0.5`                           |
+| `first_max`           | `6.5`                           |
+| `second_max`          | `10.5`                          |
+| `schedule`            | `'equal'`                       |
+| `num_windows`         | `10`                            |
+| `rtr_window`          | `'0.0,0.05,0.1,0.2,0.5,1.0'`    |
+| `move_to`             | `.`                             |
+
 Example:
 ```
 cd otf_abfe/
@@ -49,25 +63,30 @@ cd otf_abfe/auto_restraint_files
 ```
 ##### Options:
 
-**-p**: topology file (string of path name)
-**-t**: trajectory file (string of path name)
-**-l**: ligand residue name (string)
-**-s**: protein residue id, start of range (int)
-**-e**: protein residue id, end of range (int)
-**-f**: fraction cutoff (float)
-**-L**: ligand file (string of path name)
-**-P**: pdb file (string of path name)
+| Option | Description                                |
+|--------|--------------------------------------------|
+| `-p`   | topology file (string of path name)        |
+| `-t`   | trajectory file (string of path name)      |
+| `-l`   | ligand residue name (string)               |
+| `-s`   | protein residue id, start of range (int)   |
+| `-e`   | protein residue id, end of range (int)     |
+| `-f`   | fraction cutoff (float)                    |
+| `-L`   | ligand file (string of path name)          |
+| `-P`   | pdb file (string of path name)             |
 
-Default values to the options (if no input specified):
+Default values (if no input specified):
 
-topology_file="complex.prmtop"
-trajectory_file="nvt-7ns.nc"
-ligand_res_name="MOL"
-protein_res_id_start="2"
-protein_res_id_end="357"
-fraction_cutoff="0.5"
-ligand_file="setup/lig_tleap.mol2"
-pdb_file="complex-repres.pdb"
+
+| Option                 | Default Value              |
+|------------------------|----------------------------|
+| `topology_file`        | `complex.prmtop`           |
+| `trajectory_file`      | `nvt-7ns.nc`               |
+| `ligand_res_name`      | `MOL`                      |
+| `protein_res_id_start` | `2`                        |
+| `protein_res_id_end`   | `357`                      |
+| `fraction_cutoff`      | `0.5`                      |
+| `ligand_file`          | `setup/lig_tleap.mol2`     |
+| `pdb_file`             | `complex-repres.pdb`       |
 
 Example:
 ```
