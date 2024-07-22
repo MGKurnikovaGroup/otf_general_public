@@ -3,7 +3,7 @@
 
 ## Simulations
 ***
-### Absolute binding free energy
+### **Absolute binding free energy**
 
 Show Help: ```./run_abfe.sh -h```
 
@@ -102,6 +102,6 @@ cd auto_restraint_files
 ***
 
 
-### Relative binding free energy
+### **Relative binding free energy**
 
 ## 
