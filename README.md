@@ -1,14 +1,77 @@
 # otf_general
 
-## Automated Restraint Analysis
 
-[Description]
-
-Usage:
 ## Simulations
 
-## Absolute binding free energy
+### Absolute binding free energy
 
-## Relative binding free energy
+Show Help: ./run_abfe.sh -h
+
+Usage:
+
+1. In the h55 linux server, create a directory outside of otf_general
+2. Copy the ./run_abfe.sh file in: cp ../otf_general/otf_abfe/run_abfe.sh .
+3. Copy in desired abfe data directories
+4. Create another directory as the destination for the simulation to write to (-m option)
+4. run the script below
+
+```
+./run_abfe.sh <options> <execution type ('dcrg','water','rtr','all')> <data directories>
+```
+
+Options:
+-c: convergence cutoff (float)
+-i: initial time (float)
+-a: additional time (float)
+-f: first max value (float)
+-s, second max value (float)
+-S, schedule ('equal' OR 'gaussian' OR 'custom')
+-n, number of windows (int)
+-C: custom windows ([float],[float],[float],...) 
+-r: rtr window ([float],[float],[float],...) 
+-m, destination directory (string of path name)
+
+Example:
+```
+cd otf_abfe/
+./run_abfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/lysozyme_testing all lys_0 lys_1
+```
+
+#### Automated restraint analysis
+
+##### Usage:
+```
+cd otf_abfe/auto_restraint_files
+./auto_restraint.sh <options> <directories>
+```
+##### Options:
+
+**-p**: topology file (string of path name)
+**-t**: trajectory file (string of path name)
+**-l**: ligand residue name (string)
+**-s**: protein residue id, start of range (int)
+**-e**: protein residue id, end of range (int)
+**-f**: fraction cutoff (float)
+**-L**: ligand file (string of path name)
+**-P**: pdb file (string of path name)
+
+Default values to the options (if no input specified):
+
+topology_file="complex.prmtop"
+trajectory_file="nvt-7ns.nc"
+ligand_res_name="MOL"
+protein_res_id_start="2"
+protein_res_id_end="357"
+fraction_cutoff="0.5"
+ligand_file="setup/lig_tleap.mol2"
+pdb_file="complex-repres.pdb"
+
+Example:
+```
+cd auto_restraint_files
+./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 357 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb ../lysozyme_test_case_restraints ../dir2 ../dir3
+```
+
+### Relative binding free energy
 
 ## 
