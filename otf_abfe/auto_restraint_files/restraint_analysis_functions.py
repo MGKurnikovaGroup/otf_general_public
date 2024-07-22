@@ -15,6 +15,7 @@ def execute(frac, bb='md-complex/BB.avg.dat', bb2='md-complex/BB2.avg.dat', liga
     ligand_file = ligand
     global pdb_file
     pdb_file = pdb
+    print('asdf',pdb_file)
 
     df1 = pd.read_csv(bb_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
     df2 = pd.read_csv(bb2_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
@@ -373,6 +374,7 @@ def find_neighbors(mol, test_loc=''):
     #Return atom numbers via connectivity of mol2 file
     #input: string mol ('C4'), string test_loc (path to file)
     #returns: string list containing indices of neighbors
+    global ligand_file
     if test_loc != '':
         ligand_file = test_loc
 
@@ -411,6 +413,7 @@ def find_hydrogen_neighbor(moln_list, mol, test_loc=''):
     #          moln_list contains neighbors to mol
 
     #bug: if mol not in moln_list, still returns mol
+    global ligand_file
     if test_loc != '':
         ligand_file = test_loc
     atom_neighbors=[]
@@ -447,6 +450,7 @@ def neighbor_names(moln_list, test_loc=''):
     #Return atom names of heavy atom neighbors
     #input: String moln_list, contains indices of neighbors
     #returns: String List, names of neighbors
+    global ligand_file
     if test_loc != '':
         ligand_file = test_loc
     
@@ -498,7 +502,7 @@ def find_location(atom, test_loc=''):
     #returns: Tuple (float, float, float) xyz location of atom
     #Assumes that the ligand is the first residue.
     #Should fail if gets to second residue without finding name
-
+    global pdb_file
     if test_loc != '':
         pdb_file = test_loc
 
@@ -515,7 +519,7 @@ def find_residue_loc(residue, test_loc=''):
     #input: String residue, acceptor from BB.avg.data or BB2.avg.data (GLN_103@OE1)
     #returns: Tuple (Tuple (float, float, float), Tuple (float, float, float)) xyz location of residue
     #         OR None if N, C, CA molecules not found in the group
-
+    global pdb_file
     if test_loc != '':
         pdb_file = test_loc
         
@@ -684,9 +688,11 @@ def choose_neighbors(res_loc, res_loc_2, mol_atom_a, n_names, neighbors_neighbor
 def centroid_search(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names excluding hydrogen, 
     #                tuple[1] is list of respective atom distances from centroid
+    global pdb_file
+    print('asdf',pdb_file)
     if test_loc != '':
         pdb_file = test_loc
-
+    print('asdf',pdb_file)
     ligand=open(pdb_file, 'r')
     start = False
     xs=[]
@@ -730,6 +736,7 @@ def centroid_search(test_loc=''):
 def find_ca_atoms(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names (CA only),
     #                tuple[1] is list of respective atom locations
+    global pdb_file
     if test_loc != '':
         pdb_file = test_loc
 
@@ -754,6 +761,7 @@ def find_ca_atoms(test_loc=''):
 def find_backbone_atoms(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names (N, C, or CA),
     #                tuple[1] is list of respective atom locations
+    global pdb_file
     if test_loc != '':
         pdb_file = test_loc
 
