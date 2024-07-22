@@ -5,7 +5,7 @@
 
 ### Absolute binding free energy
 
-Show Help: ./run_abfe.sh -h
+Show Help: ```./run_abfe.sh -h```
 
 Usage:
 
