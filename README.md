@@ -1,11 +1,10 @@
 # otf_general
 
-[Description]
+[Description] ... using AMBER20. 
 
 ## Setup
 
-1. Create a directory, clone otf_general into that directory.
-A parent directory will be needed for the simulations.
+1. Create a directory, clone otf_general into that directory. A parent directory will be needed for the simulations.
 2. Install [Anaconda](https://docs.anaconda.com/anaconda/install/)
 3. Install pymbar and alchemlyb:
 ```
