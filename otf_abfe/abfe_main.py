@@ -13,7 +13,9 @@ parser.add_argument('--second_max', type=float, default=10.5, help='second maxim
 
 parser.add_argument('--schedule', type=str, default='equal', help='schedule for lambda windows')
 parser.add_argument('--num_windows', type=int, default=10, help='number of lambda windows')
-parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda windows')
+parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda windows for dcrg and water (comma delimited)')
+parser.add_argument('--rtr_window', type=str, default='0.0,0.05,0.1,0.2,0.5,1.0', help='list of lambda windows for rtr (comma delimited)')
+parser.add_argument('--order', type=int, default=2, help='order number')
 
 args=parser.parse_args()
 
@@ -27,7 +29,12 @@ gaussian_windows = {1:[0.5],
 
 #Creating lambda windows
 if args.schedule.lower() == 'equal':
-    lambdas = [i/args.num_windows for i in range(args.num_windows)]
+    if args.order == 1:
+        lambdas = [i/args.num_windows-1 for i in range(args.num_windows)]
+    else:
+        assert(args.order == 2)
+        lambdas = [(i+1)/(args.num_windows+1) for i in range(args.num_windows)]
+    print('lambdas',lambdas)
 elif args.schedule.lower() == 'gaussian':
     if args.num_windows not in gaussian_windows:
         raise ValueError('Gaussian window not available for this number of windows')
@@ -39,6 +46,8 @@ elif args.schedule.lower() == 'custom':
 else:
     raise ValueError('schedule must be equal, gaussian, or custom')
 
+#rtr lambda windows are independent of dcrg and water widows
+rtr_lambdas = [float(i) for i in args.rtr_window.split(',')]
 
 #Executions (dcrg, water, rtr)
 if args.type == 'dcrg':
@@ -50,13 +59,14 @@ elif args.type == 'water':
         abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max)
 
 elif args.type == 'rtr':
-    for l in lambdas:
+    for l in rtr_lambdas:
         abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max)
 elif args.type == 'all':
     for l in lambdas:
         print('a',args.directory_path)
         abfe_simulate.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max)
         abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max)
+    for l in rtr_lambdas:
         abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max)
 else:
     raise ValueError('type must be dcrg, water, or rtr')

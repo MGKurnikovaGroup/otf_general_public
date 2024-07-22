@@ -15,7 +15,8 @@ mywd=$(pwd)
 # if [ "$current_dir" == "/" ]; then
 #     echo "Directory 'otf_abfe' not found."
 # fi
-mypcl=$(find ../ -type d -name "otf_abfe")
+# mypcl=$(find ../ -type d -name "otf_abfe")
+mypcl=$(realpath $(find ../ -type d -name "otf_abfe"))
 
 show_help() {
     echo "Usage: $0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN"
@@ -27,7 +28,8 @@ show_help() {
     echo "  -s, --second-max VALUE           Set second max value"
     echo "  -S, --schedule VALUE             Set schedule"
 	echo "  -n, --num-windows VALUE          Set number of windows"
-	echo "  -C, --custom-windows VALUE       Set custom windows"
+	echo "  -C, --custom-windows x,y,z       Set custom windows"
+	echo "  -r, --rtr_window x,y,z           Set custom windows"
 	echo "  -m, --move-to VALUE              Set destination directory"
     echo "  -h, --help                       Show this help message and exit"
 
@@ -43,6 +45,7 @@ first_max=6.5
 second_max=10.5
 schedule='equal'
 num_windows=10
+rtr_window='0.0,0.05,0.1,0.2,0.5,1.0'
 move_to=.
 
 #process parameters
@@ -80,6 +83,10 @@ while [[ $# -gt 0 ]]; do
 			custom_windows="$2"
 			shift 2
 			;;
+		-r|--rtr-window)
+			rtr_window="$2"
+			shift 2
+			;;
 		-m|--move-to)
 			move_to="$2"
 			shift 2
@@ -114,6 +121,7 @@ echo "second_max = $second_max"
 echo "schedule = $schedule"
 echo "num_windows = $num_windows"
 echo "custom_windows = $custom_windows"
+echo "rtr_window = $rtr_window"
 echo "type = $type"
 echo "directories = $@"
 echo "otf_abfe directory: $mypcl"
@@ -123,8 +131,8 @@ for X in "$@"
 do
 	echo =====  $X  =======================
 	cd $X
-	cp ../$mypcl/*.py .
-	python3 abfe_main.py "../$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows"
+	cp $mypcl/*.py .
+	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --rtr_window "$rtr_window"
 	cd ..
 	mv $X "$move_to"
 done 
