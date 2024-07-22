@@ -23,7 +23,6 @@ Options:
 
 
 -c: convergence cutoff (float)
-
 -i: initial time (float)
 
 -a: additional time (float)
