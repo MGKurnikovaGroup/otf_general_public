@@ -70,6 +70,7 @@ def process_lam(lam):
 
 def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional_time, max_time_1, max_time_2):
     #Create Directory Architecture
+    print('b',directory_path)
     lam=process_lam(lam)
     print(lam)
     if not os.path.exists("./dcrg+vdw/la-"+lam):
