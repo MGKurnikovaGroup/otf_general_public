@@ -9,7 +9,7 @@ sys.path.insert(0, parent_dir)
 from restraint_analysis_functions import *
 
 ###################Helpers########################
-root_dir = Path(__file__).resolve().parent.parent.parent
+root_dir = Path(__file__).resolve().parent.parent.parent.parent
 
 def truncate_to_three_decimals(number):
     str_num = str(number)
@@ -19,7 +19,7 @@ def truncate_to_three_decimals(number):
         return f"{integer_part}.{truncated_decimal_part}"
     else:
         return str_num
-#make the above functino generalizable to any number of decimals
+    
 def truncate_to_n_decimals(number, n):
     str_num = str(number)
     if '.' in str_num:
@@ -35,7 +35,6 @@ def almost_equal(num1, num2, places=3):
 
 def list_almost_equal(list1, list2):
     if len(list1) != len(list2):
-        print('asdf')
         return False
     for i in range(len(list1)):
         if not almost_equal(list1[i], list2[i]):
@@ -185,7 +184,6 @@ def test_choose_neighbors():
     test1 = choose_neighbors(res_loc, res_loc_2, mol_atom_a, n_names, 
                             neighbors_neighbors_names, mol_atom_a_loc, 
                             n_locations, nn_locations) 
-    print(test1[0])
     assert(test1[0] == [(33.985, 31.377, 38.696), (34.518, 31.68, 39.967), (34.467, 30.76, 40.948)])
     assert(test1[1] == ['C6', 'C1', 'C2'])
     assert(test1[2] == 0)

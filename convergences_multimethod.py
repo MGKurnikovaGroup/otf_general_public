@@ -246,25 +246,36 @@ def subsample_data(data, tau_int):#takes it as an np array and autocorrelation t
 
     return data[subsample_indices]
 
-def check_convergence(sample, cutoff, n_bins):
-    # Calculate the range of the sample data
-    print(n_bins)
+
+
+# Function to check convergence
+def check_convergence(sample, cutoff):
+    # Divides set in two and performs Jensen-Shannon distance
+    # to check for convergence below an arbitrary value
+    # Returns True if converged, else False
+
+    # Calculate the range of the sample
     s_range = np.max(sample) - np.min(sample)
     
-    # Generate quantile bins
-    qs = [np.min(sample) + (i + 1) / (n_bins + 1) * s_range for i in range(n_bins)]
+
+
+    # Define binning the sample
+    for i in range(6):
+        qs= [np.min(sample) + (i + 1) / 7 * s_range]
+    print(qs, np.median(sample))
     
-    # Split the sample data into two halves
-    data_1 = sample[:len(sample) // 2]
-    data_2 = sample[len(sample) // 2:]
+    # Split the sample into two halves (usually 7 each)
+    data_1 = sample[:math.floor(len(sample) / 2)]
+    data_2 = sample[math.floor(len(sample) / 2):]
     
-    # Initialize bins for data_1 and data_2
-    data_1_bins = []
+    # Initialize bins for both halves
+    data_1_bins = [] #empty to concentate 
     data_2_bins = []
     
-    # Populate the bins based on quantiles
+    # Calculate the histogram for each half
     for j in range(len(qs) - 1):
-        num_1 = num_2 = 0
+        num_1 = 0
+        num_2 = 0
         if j == 0:
             for k in data_1:
                 if k < qs[0]:
@@ -274,7 +285,8 @@ def check_convergence(sample, cutoff, n_bins):
                     num_2 += 1
             data_1_bins.append(num_1 / len(data_1))
             data_2_bins.append(num_2 / len(data_2))
-        num_1 = num_2 = 0
+            num_1, num_2 = 0, 0
+        
         for k in data_1:
             if qs[j] <= k < qs[j + 1]:
                 num_1 += 1
@@ -284,20 +296,23 @@ def check_convergence(sample, cutoff, n_bins):
         data_1_bins.append(num_1 / len(data_1))
         data_2_bins.append(num_2 / len(data_2))
         
-    # Handle the last bin separately
-    num_1 = num_2 = 0
-    for k in data_1:
-        if k >= qs[-1]:
-            num_1 += 1
-    for k in data_2:
-        if k >= qs[-1]:
-            num_2 += 1
-    data_1_bins.append(num_1 / len(data_1))
-    data_2_bins.append(num_2 / len(data_2))
+        if j + 2 == len(qs):
+            num_1, num_2 = 0, 0
+            for k in data_1:
+                if k >= qs[j + 1]:
+                    num_1 += 1
+            for k in data_2:
+                if k >= qs[j + 1]:
+                    num_2 += 1
+            data_1_bins.append(num_1 / len(data_1))
+            data_2_bins.append(num_2 / len(data_2))
     
-    # Compute Jensen-Shannon distance between the two distributions
-    js_distance = js(data_1_bins, data_2_bins)
+    # Calculate Jensen-Shannon divergence between the two histograms
+    print('DL Divergence', js(data_1_bins, data_2_bins))
     
-    # Check if the JS distance is below the cutoff
-    converged = bool(js_distance <= cutoff)
-    return converged, js_distance
+    # Check if the divergence is below the cutoff value
+    if js(data_1_bins, data_2_bins) <= cutoff:
+        return True, js(data_1_bins, data_2_bins)
+    else:
+        return False, js(data_1_bins, data_2_bins)
+
