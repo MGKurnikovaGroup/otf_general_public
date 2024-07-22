@@ -1,10 +1,24 @@
 # otf_general
 
+[Description]
+
+## Setup
+
+1. Clone otf_general to 
+2. Install [Anaconda](https://docs.anaconda.com/anaconda/install/)
+3. Install pymbar and alchemlyb:
+```
+pip install pymbar
+pip install alchemlyb
+```
+
 
 ## Simulations
 ***
 ### **Absolute binding free energy**
 ***
+[Description]
+
 Show Help: ```./run_abfe.sh -h```
 
 Usage:
@@ -59,6 +73,7 @@ cd otf_abfe/
 
 
 #### Automated restraint analysis
+[Description]
 
 Show Help: ```./auto_restraint.sh -h```
 ##### Usage:
@@ -105,4 +120,6 @@ cd auto_restraint_files
 
 ### **Relative binding free energy**
 ***
+[Description]
+
 ## 
