@@ -2,7 +2,7 @@
 
 
 ## Simulations
-
+***
 ### Absolute binding free energy
 
 Show Help: ```./run_abfe.sh -h```
@@ -97,6 +97,10 @@ Example:
 cd auto_restraint_files
 ./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 357 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb ../lysozyme_test_case_restraints ../dir2 ../dir3
 ```
+
+
+***
+
 
 ### Relative binding free energy
 
