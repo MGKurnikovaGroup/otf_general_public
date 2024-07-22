@@ -13,7 +13,7 @@ Usage:
 2. Copy the ./run_abfe.sh file in: cp ../otf_general/otf_abfe/run_abfe.sh .
 3. Copy in desired abfe data directories
 4. Create another directory as the destination for the simulation to write to (-m option)
-4. run the script below
+4. Run the script below
 
 ```
 ./run_abfe.sh <options> <execution type ('dcrg','water','rtr','all')> <data directories>
@@ -53,6 +53,10 @@ Example:
 cd otf_abfe/
 ./run_abfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/lysozyme_testing all lys_0 lys_1
 ```
+
+
+***
+
 
 #### Automated restraint analysis
 
