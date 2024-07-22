@@ -21,17 +21,18 @@ Usage:
 
 Options:
 
-
--c: convergence cutoff (float)
--i: initial time (float)
--a: additional time (float)
--f: first max value (float)
--s, second max value (float)
--S, schedule ('equal' OR 'gaussian' OR 'custom')
--n, number of windows (int)
--C: custom windows ([float],[float],[float],...) 
--r: rtr window ([float],[float],[float],...) 
--m, destination directory (string of path name)
+| Option | Description                                  |
+|--------|----------------------------------------------|
+| `-c`   | convergence cutoff (float)                   |
+| `-i`   | initial time (float)                         |
+| `-a`   | additional time (float)                      |
+| `-f`   | first max value (float)                      |
+| `-s`   | second max value (float)                     |
+| `-S`   | schedule ('equal' OR 'gaussian' OR 'custom')  |
+| `-n`   | number of windows (int)                      |
+| `-C`   | custom windows ([float],[float],[float],...)  |
+| `-r`   | rtr window ([float],[float],[float],...)      |
+| `-m`   | destination directory (string of path name)   |
 
 Example:
 ```
