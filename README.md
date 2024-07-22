@@ -72,8 +72,12 @@ cd otf_abfe/
 
 Show Help: ```./auto_restraint.sh -h```
 ##### Usage:
+
+1. Navigate to otf_abfe/auto_restraint_files
+2. Run the following
+3. Note: the inputted directories should contain all the data files (see Options below). They should also be located just one level under otf_general, like otf_abfe.
+
 ```
-cd otf_abfe/auto_restraint_files
 ./auto_restraint.sh <options> <directories>
 ```
 ##### Options:
