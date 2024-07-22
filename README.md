@@ -2,9 +2,8 @@
 
 
 ## Simulations
-***
 ### **Absolute binding free energy**
-
+***
 Show Help: ```./run_abfe.sh -h```
 
 Usage:
@@ -60,6 +59,7 @@ cd otf_abfe/
 
 #### Automated restraint analysis
 
+Show Help: ```./auto_restraint.sh -h```
 ##### Usage:
 ```
 cd otf_abfe/auto_restraint_files
