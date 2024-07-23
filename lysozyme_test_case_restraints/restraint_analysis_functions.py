@@ -15,7 +15,6 @@ def execute(frac, bb='md-complex/BB.avg.dat', bb2='md-complex/BB2.avg.dat', liga
     ligand_file = ligand
     global pdb_file
     pdb_file = pdb
-    print('asdf',pdb_file)
 
     df1 = pd.read_csv(bb_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
     df2 = pd.read_csv(bb2_file, engine='python', sep=r'\s{2,}', header=0, names=['Acceptor', 'DonorH', 'Donor', 'Frames', 'Frac', 'AvgDist', 'AvgAng'])
@@ -689,10 +688,8 @@ def centroid_search(test_loc=''):
     #returns: Tuple, tuple[0] is list of atom names excluding hydrogen, 
     #                tuple[1] is list of respective atom distances from centroid
     global pdb_file
-    print('asdf',pdb_file)
     if test_loc != '':
         pdb_file = test_loc
-    print('asdf',pdb_file)
     ligand=open(pdb_file, 'r')
     start = False
     xs=[]
