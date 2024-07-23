@@ -198,7 +198,7 @@ def calculate_errors(data, true_tau_int=None, method="pymbar", max_lag=100): #ca
     return tau_int_manual, tau_int_block, tau_int_pymbar, tau_int_avg, errors
 
 def analyze(lam, decorrelate=False, method="pymbar"):
-     if 'la' in lam:
+    if 'la' in lam:
         lam = lam.split('-')[1]
     datalist = glob.glob('./la-' + lam + '/prod/*.out*')
     if not datalist:
@@ -218,9 +218,9 @@ def analyze(lam, decorrelate=False, method="pymbar"):
     if decorrelate:
         # Use the specified method to calculate the autocorrelation time
         if method == "manual":
-        acf = calculate_acf_manual(dHdl_ssmp, max_lag=100)
-        tau_int = integrated_autocorrelation_time_manual(acf)
-        dHdl_ssmp = subsample_data(dHdl_ssmp, tau_int) #This function subsamples the data based on the given autocorrelation time. It takes every tau_int-th element from the data
+            acf = calculate_acf_manual(dHdl_ssmp, max_lag=100)
+            tau_int = integrated_autocorrelation_time_manual(acf)
+            dHdl_ssmp = subsample_data(dHdl_ssmp, tau_int) #This function subsamples the data based on the given autocorrelation time. It takes every tau_int-th element from the data
         elif method == "block_averaging":
             block_size = calculate_optimal_block_size(dHdl_ssmp)
             tau_int = calculate_tau_int_block(dHdl_ssmp, block_size)
