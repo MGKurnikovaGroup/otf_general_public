@@ -14,7 +14,7 @@ from pathlib import Path
 root_dir = str(Path(__file__).resolve().parent.parent)
 sys.path.insert(0, root_dir)
 import convergence_test as ct
-import convergence_test as ct_abfe
+import convergence_test_abfe as ct_abfe
 
 
 def update_input(lam, loc, dest, prod=False, nstlim=0):
