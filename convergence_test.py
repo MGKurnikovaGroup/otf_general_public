@@ -8,6 +8,7 @@ import numpy as np
 from pymbar import timeseries
 from sklearn.utils import resample
 from scipy.spatial.distance import jensenshannon as js #A function to compute the Jensen-Shannon divergence
+from convergence_test_abfe import analyze_rtr
 
 # Constants
 temp = 300.0  # Temp in Kelvin
