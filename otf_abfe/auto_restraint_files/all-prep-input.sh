@@ -93,14 +93,15 @@ do
     parm complex.prmtop
     reference complex.inpcrd
 
-    rst :MOL@LATOM1 :PROTATOM1 reference width 10.0 rk2 "$distance" rk3 "$distance" out k.RST
-    rst :MOL@LATOM1 :PROTATOM1 :PROTATOM2 reference width 90.0 rk2 "$angle" rk3 "$angle" out k.RST
-    rst :MOL@LATOM1 :PROTATOM1 :PROTATOM2 :PROTATOM3 reference width 90.0 rk2 "$dihedral" rk3 "$dihedral" out k.RST
-    rst :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 reference width 90.0 rk2 "$angle" rk3 "$angle" out k.RST
-    rst :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 :PROTATOM2 reference width 90.0 rk2 "$dihedral" rk3 "$dihedral" out k.RST
-    rst :MOL@LATOM3 :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 reference width 90.0 rk2 "$dihedral" rk3 "$dihedral" out k.RST
+    rst :MOL@LATOM1 :PROTATOM1 reference width 10.0 rk2 $distance rk3 $distance out k.RST
+    rst :MOL@LATOM1 :PROTATOM1 :PROTATOM2 reference width 90.0 rk2 $angle rk3 $angle out k.RST
+    rst :MOL@LATOM1 :PROTATOM1 :PROTATOM2 :PROTATOM3 reference width 90.0 rk2 $dihedral rk3 $dihedral out k.RST
+    rst :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 reference width 90.0 rk2 $angle rk3 $angle out k.RST
+    rst :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 :PROTATOM2 reference width 90.0 rk2 $dihedral rk3 $dihedral out k.RST
+    rst :MOL@LATOM3 :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 reference width 90.0 rk2 $dihedral rk3 $dihedral out k.RST
 
     run
+
     EOF
 
     sed "s/LATOM1/$myla1/" samplep.cpp.get-vb.in > cpp.get-vb.in
