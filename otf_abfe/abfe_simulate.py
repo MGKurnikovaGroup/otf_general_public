@@ -142,7 +142,7 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
     #Create Input Files
     update_input(lam, directory_path+'/water-dcrg+vdw/1_min/1min.in', "./water-dcrg+vdw/la-"+lam+'/1_min/1min.in', sssc)
     update_input(lam, directory_path+'/water-dcrg+vdw/1_min/2min.in', "./water-dcrg+vdw/la-"+lam+'/1_min/2min.in', sssc)
-    update_input(lam, directory_path+'/water-dcrg+vdw/2_nvt/nvt.in', "./water-dcrg+vdw/la-"+lam+'/2_nvt/nvt.in')
+    update_input(lam, directory_path+'/water-dcrg+vdw/2_nvt/nvt.in', "./water-dcrg+vdw/la-"+lam+'/2_nvt/nvt.in', sssc)
     update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/1_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/1_npt.in', sssc)
     update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/2_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/2_npt.in', sssc)
     update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/3_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/3_npt.in', sssc)
