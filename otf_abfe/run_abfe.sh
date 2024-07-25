@@ -30,9 +30,11 @@ show_help() {
 	echo "  -n, --num-windows VALUE          Set number of windows"
 	echo "  -C, --custom-windows x,y,z       Set custom windows"
 	echo "  -r, --rtr_window x,y,z           Set rtr window"
+	echo "  -o, --sssc VALUE                 Set sssc options (1, 2)"
 	echo "  -m, --move-to VALUE              Set destination directory"
     echo "  -h, --help                       Show this help message and exit"
 
+	echo "See README.md for default inputs."
 }
 
 #Option Handling
@@ -46,6 +48,7 @@ second_max=10.5
 schedule='equal'
 num_windows=10
 rtr_window='0.0,0.05,0.1,0.2,0.5,1.0'
+sssc=2
 move_to=.
 
 #process parameters
@@ -87,6 +90,10 @@ while [[ $# -gt 0 ]]; do
 			rtr_window="$2"
 			shift 2
 			;;
+		-o|--sssc)
+			sssc="$2"
+			shift 2
+			;;
 		-m|--move-to)
 			move_to="$2"
 			shift 2
@@ -123,6 +130,7 @@ echo "num_windows = $num_windows"
 echo "custom_windows = $custom_windows"
 echo "rtr_window = $rtr_window"
 echo "type = $type"
+echo "sssc = $sssc"
 echo "directories = $@"
 echo "otf_abfe directory: $mypcl"
 echo "moving to: $move_to"
@@ -132,7 +140,7 @@ do
 	echo =====  $X  =======================
 	cd $X
 	cp $mypcl/*.py .
-	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --rtr_window "$rtr_window"
+	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --rtr_window "$rtr_window" --sssc
 	cd ..
 	mv $X "$move_to"
 done 
