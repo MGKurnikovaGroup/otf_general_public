@@ -2,6 +2,52 @@
 mywd=$(pwd)
 mypcl=$(realpath $(find ../ -type d -name "otf_abfe"))
 
+show_help() {
+    echo "Usage: $0 [options] dir1 dir2 ... dirN"
+    echo "Options:"
+    echo "  -d, --distance FLOAT     distance (default: 2.0)"
+    echo "  -a, --angle FLOAT   angle (default: 10.0)"
+    echo "  -D, --dihedral FLOAT   dihedral (default: 20.0)"
+}
+
+distance=2.0
+angle=10.0
+dihedral=20.0
+
+#options for writing values of angle, distance, and dihedral to samplep.cpp.get-vb.in file
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--distance)
+            distance="$2"
+            shift 2
+            ;;
+        -a|--angle)
+            angle="$2"
+            shift 2
+            ;;
+		-D|--dihedral)
+			dihedral="$2"
+			shift 2
+			;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            echo "Unknown option: $1" >&2
+            show_help
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 for X in "$@"
 do
     echo =====  $X  =======================
@@ -41,6 +87,21 @@ do
     echo "vbla.txt:"
     cat vbla.txt; 
     echo
+
+    #edit samplep.cpp.get-vb.in to user inputted angle, distance, dihedral values
+    cat <<EOF > samplep.cpp.get-vb.in
+    parm complex.prmtop
+    reference complex.inpcrd
+
+    rst :MOL@LATOM1 :PROTATOM1 reference width 10.0 rk2 "$distance" rk3 "$distance" out k.RST
+    rst :MOL@LATOM1 :PROTATOM1 :PROTATOM2 reference width 90.0 rk2 "$angle" rk3 "$angle" out k.RST
+    rst :MOL@LATOM1 :PROTATOM1 :PROTATOM2 :PROTATOM3 reference width 90.0 rk2 "$dihedral" rk3 "$dihedral" out k.RST
+    rst :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 reference width 90.0 rk2 "$angle" rk3 "$angle" out k.RST
+    rst :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 :PROTATOM2 reference width 90.0 rk2 "$dihedral" rk3 "$dihedral" out k.RST
+    rst :MOL@LATOM3 :MOL@LATOM2 :MOL@LATOM1 :PROTATOM1 reference width 90.0 rk2 "$dihedral" rk3 "$dihedral" out k.RST
+
+    run
+    EOF
 
     sed "s/LATOM1/$myla1/" samplep.cpp.get-vb.in > cpp.get-vb.in
     sed -i "s/LATOM2/$myla2/" cpp.get-vb.in
