@@ -104,7 +104,7 @@ do
 
 EOF
 
-    sed "s/LATOM1/$myla1/" samplep.cpp.get-vb.in > cpp.get-vb.in
+    sed "s/LATOM1/$myla1/" template.cpp.get-vb.in > cpp.get-vb.in
     sed -i "s/LATOM2/$myla2/" cpp.get-vb.in
     sed -i "s/LATOM3/$myla3/" cpp.get-vb.in
     sed -i "s/PROTATOM1/$mypa1/" cpp.get-vb.in
