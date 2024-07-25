@@ -102,7 +102,7 @@ do
 
     run
 
-    EOF
+EOF
 
     sed "s/LATOM1/$myla1/" samplep.cpp.get-vb.in > cpp.get-vb.in
     sed -i "s/LATOM2/$myla2/" cpp.get-vb.in
