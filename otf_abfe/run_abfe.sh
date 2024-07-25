@@ -29,7 +29,7 @@ show_help() {
     echo "  -S, --schedule VALUE             Set schedule"
 	echo "  -n, --num-windows VALUE          Set number of windows"
 	echo "  -C, --custom-windows x,y,z       Set custom windows"
-	echo "  -r, --rtr_window x,y,z           Set custom windows"
+	echo "  -r, --rtr_window x,y,z           Set rtr window"
 	echo "  -m, --move-to VALUE              Set destination directory"
     echo "  -h, --help                       Show this help message and exit"
 

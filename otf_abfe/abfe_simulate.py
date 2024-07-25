@@ -14,6 +14,7 @@ from pathlib import Path
 root_dir = str(Path(__file__).resolve().parent.parent)
 sys.path.insert(0, root_dir)
 import convergence_test as ct
+import convergence_test_abfe as ct_abfe
 
 
 def update_input(lam, loc, dest, prod=False, nstlim=0):
@@ -79,7 +80,6 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
         os.mkdir("./dcrg+vdw/la-"+lam+'/2_nvt')
         os.mkdir("./dcrg+vdw/la-"+lam+'/3_npt')
         os.mkdir("./dcrg+vdw/la-"+lam+'/prod')
-    
     #Create Input Files
     update_input(lam, directory_path+'/dcrg+vdw/1_min/1min.in', "./dcrg+vdw/la-"+lam+'/1_min/1min.in')
     update_input(lam, directory_path+'/dcrg+vdw/1_min/2min.in', "./dcrg+vdw/la-"+lam+'/1_min/2min.in')
@@ -192,7 +192,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
-    rtr_data =ct.analyze_rtr(lam, decorrelate=True)
+    rtr_data =ct_abfe.analyze_rtr(lam, decorrelate=True)
     while (not ct.check_convergence(rtr_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(rtr_data) <= 50:
         #Currently allows 8 restarts (4ns extra)
         #Requires 50 samples to continue
@@ -211,7 +211,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
                     str(counter_quotient)+str(counter_remainder+1), nstlim=additional_time)
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         counter += 1
-        rtr_data=ct.analyze_rtr(lam, decorrelate=True)
+        rtr_data=ct_abfe.analyze_rtr(lam, decorrelate=True)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
     os.chdir('..')
