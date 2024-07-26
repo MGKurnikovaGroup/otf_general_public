@@ -89,7 +89,7 @@ do
     echo
 
     #edit samplep.cpp.get-vb.in to user inputted angle, distance, dihedral values
-    cat <<EOF > samplep.cpp.get-vb.in
+    cat <<EOF > template.cpp.get-vb.in
     parm complex.prmtop
     reference complex.inpcrd
 
