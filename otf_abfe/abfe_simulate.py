@@ -17,7 +17,7 @@ import convergence_test as ct
 import convergence_test_abfe as ct_abfe
 
 
-def update_input(lam, loc, dest, prod=False, nstlim=0):
+def update_input(lam, loc, dest, sssc, prod=False, nstlim=0):
     #moves input file from dest to loc with
     #updated lambda value lam
     lam=process_lam(lam)
@@ -26,6 +26,13 @@ def update_input(lam, loc, dest, prod=False, nstlim=0):
         if prod:
             data = data.replace('nstlim = z', 'nstlim = '+ str(int(math.floor(nstlim/0.000002))))
         data = data.replace('clambda = x', 'clambda = '+ lam)
+
+        #sssc options: 2 - leave as is, 1 - change values below
+        if sssc == 1:
+            data = data.replace('gti_lam_sch = 1', 'gti_lam_sch = 0')
+            data = data.replace('scalpha=0.2', 'scalpha=0.5')
+            data = data.replace('scbeta=50.0', 'scbeta=12.0')
+            
     file.close()
     with open(dest, 'w') as file:
         file.write(data)
@@ -69,7 +76,7 @@ def process_lam(lam):
         lam=lam.split('-')[1]
     return lam
 
-def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional_time, max_time_1, max_time_2):
+def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional_time, max_time_1, max_time_2, sssc):
     #Create Directory Architecture
     print('b',directory_path)
     lam=process_lam(lam)
@@ -81,13 +88,13 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
         os.mkdir("./dcrg+vdw/la-"+lam+'/3_npt')
         os.mkdir("./dcrg+vdw/la-"+lam+'/prod')
     #Create Input Files
-    update_input(lam, directory_path+'/dcrg+vdw/1_min/1min.in', "./dcrg+vdw/la-"+lam+'/1_min/1min.in')
-    update_input(lam, directory_path+'/dcrg+vdw/1_min/2min.in', "./dcrg+vdw/la-"+lam+'/1_min/2min.in')
-    update_input(lam, directory_path+'/dcrg+vdw/2_nvt/nvt.in', "./dcrg+vdw/la-"+lam+'/2_nvt/nvt.in')
-    update_input(lam, directory_path+'/dcrg+vdw/3_npt/1_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/1_npt.in')
-    update_input(lam, directory_path+'/dcrg+vdw/3_npt/2_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/2_npt.in')
-    update_input(lam, directory_path+'/dcrg+vdw/3_npt/3_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/3_npt.in')
-    update_input(lam, directory_path+'/dcrg+vdw/prod/prod.in', "./dcrg+vdw/la-"+lam+'/prod/prod.in', prod=True, nstlim=initial_time)
+    update_input(lam, directory_path+'/dcrg+vdw/1_min/1min.in', "./dcrg+vdw/la-"+lam+'/1_min/1min.in', sssc)
+    update_input(lam, directory_path+'/dcrg+vdw/1_min/2min.in', "./dcrg+vdw/la-"+lam+'/1_min/2min.in', sssc)
+    update_input(lam, directory_path+'/dcrg+vdw/2_nvt/nvt.in', "./dcrg+vdw/la-"+lam+'/2_nvt/nvt.in', sssc)
+    update_input(lam, directory_path+'/dcrg+vdw/3_npt/1_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/1_npt.in', sssc)
+    update_input(lam, directory_path+'/dcrg+vdw/3_npt/2_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/2_npt.in', sssc)
+    update_input(lam, directory_path+'/dcrg+vdw/3_npt/3_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/3_npt.in', sssc)
+    update_input(lam, directory_path+'/dcrg+vdw/prod/prod.in', "./dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time)
     
     #Run TI
     #If out file already exists, don't mess with it for now
@@ -109,7 +116,7 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
         #3rd: sufficx of restart file to use
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
-            update_input(lam, directory_path+'/dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', prod=True, nstlim=additional_time)
+            update_input(lam, directory_path+'/dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', sssc, prod=True, nstlim=additional_time)
         counter_remainder = counter % 10
         counter_quotient = counter // 10
         if counter_remainder == 9:
@@ -122,7 +129,7 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
             break
     os.chdir('..')
 
-def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_time, max_time_1, max_time_2):
+def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_time, max_time_1, max_time_2, sssc):
     #Create Directory Architecture
     lam =process_lam(lam)
     if not os.path.exists("./water-dcrg+vdw/la-"+lam):
@@ -133,13 +140,13 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
         os.mkdir("./water-dcrg+vdw/la-"+lam+'/prod')
 
     #Create Input Files
-    update_input(lam, directory_path+'/water-dcrg+vdw/1_min/1min.in', "./water-dcrg+vdw/la-"+lam+'/1_min/1min.in')
-    update_input(lam, directory_path+'/water-dcrg+vdw/1_min/2min.in', "./water-dcrg+vdw/la-"+lam+'/1_min/2min.in')
-    update_input(lam, directory_path+'/water-dcrg+vdw/2_nvt/nvt.in', "./water-dcrg+vdw/la-"+lam+'/2_nvt/nvt.in')
-    update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/1_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/1_npt.in')
-    update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/2_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/2_npt.in')
-    update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/3_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/3_npt.in')
-    update_input(lam, directory_path+'/water-dcrg+vdw/prod/prod.in', "./water-dcrg+vdw/la-"+lam+'/prod/prod.in', prod=True, nstlim=initial_time)
+    update_input(lam, directory_path+'/water-dcrg+vdw/1_min/1min.in', "./water-dcrg+vdw/la-"+lam+'/1_min/1min.in', sssc)
+    update_input(lam, directory_path+'/water-dcrg+vdw/1_min/2min.in', "./water-dcrg+vdw/la-"+lam+'/1_min/2min.in', sssc)
+    update_input(lam, directory_path+'/water-dcrg+vdw/2_nvt/nvt.in', "./water-dcrg+vdw/la-"+lam+'/2_nvt/nvt.in', sssc)
+    update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/1_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/1_npt.in', sssc)
+    update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/2_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/2_npt.in', sssc)
+    update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/3_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/3_npt.in', sssc)
+    update_input(lam, directory_path+'/water-dcrg+vdw/prod/prod.in', "./water-dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time)
 
     #Run TI
     os.chdir('water-dcrg+vdw')
@@ -157,7 +164,7 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
         #3rd: sufficx of restart file to use
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
-            update_input(lam, directory_path+'/water-dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', prod=True, nstlim=additional_time)
+            update_input(lam, directory_path+'/water-dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', sssc, prod=True, nstlim=additional_time)
         counter_quotient = counter // 10
         counter_remainder = counter % 10
         if counter_remainder == 9:

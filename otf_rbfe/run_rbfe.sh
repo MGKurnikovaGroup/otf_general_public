@@ -1,6 +1,8 @@
 #!/bin/bash
 _d="$(pwd)"
 echo "$_d"
+mypcl=$(realpath $(find ../ -type d -name "otf_rbfe"))
+
 for X in "$@"
 do
 	cd $X

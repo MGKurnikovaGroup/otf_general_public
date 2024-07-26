@@ -68,7 +68,7 @@ do
     cp md-complex/complex.prmtop ./rtr/
 
     # copy all executable files
-    cp $mypcl/auto_restraint_files/sample* ./
+    cp $mypcl/template.cpp.get-vb.in ./
     cp $mypcl/*sh ./
     cp $mypcl/dcrg+vdw/*sh dcrg+vdw/
     cp $mypcl/rtr/*sh rtr/
@@ -89,7 +89,7 @@ do
     echo
 
     #edit samplep.cpp.get-vb.in to user inputted angle, distance, dihedral values
-    cat <<EOF > samplep.cpp.get-vb.in
+    cat <<EOF > template.cpp.get-vb.in
     parm complex.prmtop
     reference complex.inpcrd
 
@@ -104,7 +104,7 @@ do
 
 EOF
 
-    sed "s/LATOM1/$myla1/" samplep.cpp.get-vb.in > cpp.get-vb.in
+    sed "s/LATOM1/$myla1/" template.cpp.get-vb.in > cpp.get-vb.in
     sed -i "s/LATOM2/$myla2/" cpp.get-vb.in
     sed -i "s/LATOM3/$myla3/" cpp.get-vb.in
     sed -i "s/PROTATOM1/$mypa1/" cpp.get-vb.in
