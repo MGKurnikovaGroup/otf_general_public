@@ -68,7 +68,7 @@ do
     cp md-complex/complex.prmtop ./rtr/
 
     # copy all executable files
-    cp $mypcl/auto_restraint_files/sample* ./
+    cp $mypcl/template.cpp.get-vb.in ./
     cp $mypcl/*sh ./
     cp $mypcl/dcrg+vdw/*sh dcrg+vdw/
     cp $mypcl/rtr/*sh rtr/
