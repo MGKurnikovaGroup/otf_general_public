@@ -8,7 +8,6 @@ import numpy as np
 from pymbar import timeseries
 from sklearn.utils import resample
 from scipy.spatial.distance import jensenshannon as js #A function to compute the Jensen-Shannon divergence
-from convergence_test_abfe import analyze_rtr
 
 # Constants
 temp = 300.0  # Temp in Kelvin
@@ -302,3 +301,50 @@ def check_convergence(sample, cutoff, n_bins):
     # Check if the JS distance is below the cutoff
     converged = bool(js_distance <= cutoff)
     return converged, js_distance
+
+def analyze_rtr(lam, from_rtr = False, decorrelate=False):
+    #Compile all outputs from lambda window
+    #Returns equilibrated and decorrelated timeseries data
+    lam = str(lam)
+    if 'la' in lam:
+        lam = lam.split('-')[1]
+    print(lam)
+    if from_rtr:
+        datalist=glob.glob('./rtr/la-'+lam+"/rstr*")
+    else:
+        datalist = glob.glob('./la-'+lam+'/rstr*')
+    #datalist=['./la-'+lam+'/prod/complex_prod.out']
+    datalist.sort()
+    print(datalist)
+    ref_list,k_list = parse_lists(from_rtr=from_rtr)
+    print("Ref List: ", ref_list)
+    print("K_list: ", k_list)
+    dvdl=np.array([])
+    rtr_lambda=[]
+    new_k = k_list.copy()
+    for n in range (1,6):
+        new_k[n] = new_k[n]/(57.2958**2)
+    if True:
+        for filename in datalist:
+            dvdls=[]
+            cfile = open(filename, 'r') # current file
+            lines = cfile.readlines()
+            for line in lines:
+                cdof = line.split() # current degrees of freedom
+                del cdof[0]
+                if len(cdof) > 6: del cdof[-1]
+                cdof, check_dih = check_dihedrals(cdof, ref_list)
+                dvdl_val = calc_dvdl(cdof, ref_list, new_k)
+                dvdls.append(dvdl_val)
+            dvdl=np.concatenate((dvdl, np.array(dvdls)))
+        istep1, ntpr, dt, nstlim = parse_constants(lam, from_rtr=from_rtr)
+        #dvdl_eq=dvdl[math.floor(.2*len(dvdl)):]
+        #dvdl_eq=dvdl[int(float(t_eq)*1000/istep1/dt+1):]
+        auto_list = timeseries.detect_equilibration(dvdl)
+        dvdl_eq = dvdl[auto_list[0]:]
+        if decorrelate:
+            dvdl_ssmp_indices=timeseries.subsample_correlated_data(dvdl_eq, conservative=True)
+            dvdl_ssmp = dvdl_eq[dvdl_ssmp_indices]
+        else:
+            dvdl_ssmp=dvdl_eq
+        return dvdl_ssmp
