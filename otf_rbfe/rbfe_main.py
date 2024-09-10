@@ -70,11 +70,11 @@ if args.type == 'site':
         rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, fpn=args.fpn)
 elif args.type == 'water':
     for l in lambdas:
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, fpn=args.fpn)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, fpn=args.fpn)
 elif args.type == 'all':
     for l in lambdas:
         rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, fpn=args.fpn)
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, fpn=args.fpn)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, fpn=args.fpn)
 else:
     raise ValueError('type must be site, water, or all')
 
