@@ -45,7 +45,7 @@ def process_lam(lam):
         lam=lam.split('-')[1]
     return lam
 
-def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc = 2, add_restr='', fpn=0):
+def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc = 2, add_restr='', fpn=0, decorrelate = True):
     #Create Directory Architecture
     lam=process_lam(lam)
     if not reference_lam == -1:
@@ -78,7 +78,7 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1: #counts number of output files
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
-    site_data = ct.analyze(lam)
+    site_data = ct.analyze(lam, decorrelate=decorrelate)
     while (not ct.check_convergence(site_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(site_data) <= 50: #Checks convergence criteria
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
@@ -90,12 +90,12 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
         else:
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         counter += 1
-        site_data=ct.analyze(lam)
+        site_data=ct.analyze(lam, decorrelate = decorrelate)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
     os.chdir('..')
 
-def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc=2, fpn=0):
+def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc=2, fpn=0, decorrelate = True):
     #Create Directory Architecture
     lam =process_lam(lam)
     if not reference_lam == -1:
@@ -127,7 +127,7 @@ def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, ad
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
-    wat_data = ct.analyze(lam)
+    wat_data = ct.analyze(lam, decorrelate = decorrelate)
     while (not ct.check_convergence(wat_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(wat_data) <= 50:
         #restart_lam.sh first argument: lamdba window
         #2nd argument: Suffix of new .out file
@@ -142,7 +142,7 @@ def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, ad
         else:
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         counter += 1
-        wat_data=ct.analyze(lam)
+        wat_data=ct.analyze(lam, decorrelate = decorrelate)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
     os.chdir('..')
