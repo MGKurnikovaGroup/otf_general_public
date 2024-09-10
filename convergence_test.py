@@ -248,7 +248,7 @@ def subsample_data(data, tau_int):#takes it as an np array and autocorrelation t
 
     return data[subsample_indices]
 
-def check_convergence(sample, cutoff, n_bins):
+def check_convergence(sample, cutoff, n_bins=7):
     # Calculate the range of the sample data
     print(n_bins)
     s_range = np.max(sample) - np.min(sample)
@@ -302,6 +302,8 @@ def check_convergence(sample, cutoff, n_bins):
     
     # Check if the JS distance is below the cutoff
     converged = bool(js_distance <= cutoff)
+    print('JS Distance: ', js_distance)
+    print('Convergence Cuttoff: ', cutoff)
     return converged, js_distance
 
 def analyze_rtr(lam, from_rtr = False, decorrelate=False):
