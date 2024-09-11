@@ -104,7 +104,8 @@ for i in range(len(scmask_clean1)):
                 #print(k)
                 coord2=(float(k[5]),float(k[6]),float(k[7]))
                 break
-        if math.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2+(coord1[2]-coord1[2])**2)<.01:
+        if math.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2+(coord1[2]-coord1[2])**2)==0 and (('H' not in scmask_clean1[i] and 'H' not in scmask_clean2[j]) or ('H' in scmask_clean1[i] and 'H' in scmask_clean2[j])):
+            print(scmask_clean1[i], scmask_clean2[j])
             remove_mask1.append(i)
             remove_mask2.append(j)
             break
