@@ -294,7 +294,10 @@ if args.t: # Trapezoid rule
     df=pd.DataFrame([np.trapz(cmean0, lam_set), overall_error**.5]).transpose()
     print(df)
 else: # Gaussian quadrature (default; args.g)
-    df=pd.DataFrame([np.dot(cmean0[1:-1], np.array(weights2)), overall_error**.5]).transpose()
+    if len(cmean0[1:-1]) == 12:
+        df=pd.DataFrame([np.dot(cmean0[1:-1],np.array([.02359, .05347, .08004, .10158, .11675, .12457, .12457, .11675, .10158, .08004, .05347, .02359])), overall_error**.5]).transpose()
+    elif len(cmean0[1:-1])==9:
+        df=pd.DataFrame([np.dot(cmean0[1:-1], np.array(weights2)), overall_error**.5]).transpose()
     print(df)
 
 df.columns=["ddG","error"]
