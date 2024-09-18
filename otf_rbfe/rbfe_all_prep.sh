@@ -1,5 +1,5 @@
 #!/bin/bash
-mypcl=$(realpath $(find ../ -type d -name "otf_rbfe"))
+mypcl=$(realpath $(find ~/ -type d -name "otf_rbfe"))
 
 
 for X in "$@"

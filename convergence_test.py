@@ -158,7 +158,7 @@ def calculate_optimal_block_size(data):
 
 
 def integrated_autocorrelation_time_pymbar(data):
-    tau_int = pymbar_timeseries.integrated_autocorrelation_time(data, fast=False, mintime=3)
+    tau_int = timeseries.integrated_autocorrelation_time(data, fast=False, mintime=3)
     return tau_int #regular pymbr 
 
 def average_tau(tau_manual, tau_pymbar):
@@ -197,7 +197,7 @@ def calculate_errors(data, true_tau_int=None, method="pymbar", max_lag=100): #ca
 
     return tau_int_manual, tau_int_block, tau_int_pymbar, tau_int_avg, errors
 
-def analyze(lam, decorrelate=False, method="pymbar"):
+def analyze(lam, decorrelate=False, method="pymbar", return_tau_int=False):
     if 'la' in lam:
         lam = lam.split('-')[1]
     datalist = glob.glob('./la-' + lam + '/prod/*.out*')
@@ -213,7 +213,7 @@ def analyze(lam, decorrelate=False, method="pymbar"):
             dHdl = np.concatenate((dHdl, np.array(dHdl0[i + 1]['dHdl'])))
     else:
         dHdl = np.array(dHdl0[0]['dHdl'])
-    auto_list = pymbar_timeseries.detect_equilibration(dHdl)
+    auto_list = timeseries.detect_equilibration(dHdl)
     dHdl_eq = dHdl[auto_list[0]:]
     if decorrelate:
         # Use the specified method to calculate the autocorrelation time
@@ -232,21 +232,23 @@ def analyze(lam, decorrelate=False, method="pymbar"):
             tau_int = average_tau(tau_int_manual, tau_int_pymbar)
             dHdl_ssmp = subsample_data(dHdl_ssmp, tau_int) #calls the subsample method for the indices 
         else:  # default to pymbar   
-            dHdl_ssmp_indices = pymbar_timeseries.subsample_correlated_data(dHdl_eq, conservative=True) #uses pymbar to get split indices
+            dHdl_ssmp_indices = timeseries.subsample_correlated_data(dHdl_eq, conservative=True) #uses pymbar to get split indices
             dHdl_ssmp = dHdl_eq[dHdl_ssmp_indices]
     else:
         dHdl_ssmp = dHdl_eq
 
  
-    
-    return dHdl_ssmp, tau_int
+    if return_tau_int:
+        return dHdl_ssmp, tau_int
+    else:
+        return dHdl_ssmp
 
 def subsample_data(data, tau_int):#takes it as an np array and autocorrelation time and subsamples based off of that and the autocorrelation time should be rounded up
     subsample_indices = np.arange(0, len(data), int(np.ceil(tau_int))) ## Generate indices for subsampling the data, starting at 0 and taking every ceil(tau_int)-th element
 
     return data[subsample_indices]
 
-def check_convergence(sample, cutoff, n_bins):
+def check_convergence(sample, cutoff, n_bins=7):
     # Calculate the range of the sample data
     print(n_bins)
     s_range = np.max(sample) - np.min(sample)
@@ -300,6 +302,8 @@ def check_convergence(sample, cutoff, n_bins):
     
     # Check if the JS distance is below the cutoff
     converged = bool(js_distance <= cutoff)
+    print('JS Distance: ', js_distance)
+    print('Convergence Cuttoff: ', cutoff)
     return converged, js_distance
 
 def analyze_rtr(lam, from_rtr = False, decorrelate=False):

@@ -27,13 +27,13 @@ directories=("$@")
 for X in "$@"
 do
     # Copy analysis.py to the directory
-    cp analysis_new.py "$X"
+    cp analysis_gt.py "$X"
     
     # Change directory to $X
     cd "$X"
     
     # Run analysis.py with the flag
-    python3 analysis_new.py "$FLAG"
+    python3 analysis_gt.py "$FLAG"
     
     # Change back to the original working directory
     cd ..

@@ -35,8 +35,8 @@ parser.add_argument('--num_windows', type=int, default=10, help='number of lambd
 parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda windows for dcrg and water (comma delimited)')
 parser.add_argument('--sssc', type=int, default=2, help='sssc option (1, 2)')
 parser.add_argument('--special', type=str, default='false', help='special option (true, false)')
-
-
+parser.add_argument('--equil_restr', type=str, default='', help='additional restraints to add for equilibration, amber mask format')
+parser.add_argument('--fpn', type=int, default=0, help='trajectory frames per nanosecond to be saved')
 args=parser.parse_args()
 
 gaussian_windows = {1:[0.5],
@@ -67,14 +67,14 @@ else:
 
 if args.type == 'site':
     for l in lambdas:
-        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max)
+        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, fpn=args.fpn)
 elif args.type == 'water':
     for l in lambdas:
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, fpn=args.fpn)
 elif args.type == 'all':
     for l in lambdas:
-        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max)
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max)
+        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, fpn=args.fpn)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, fpn=args.fpn)
 else:
     raise ValueError('type must be site, water, or all')
 

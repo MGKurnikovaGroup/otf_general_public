@@ -1,7 +1,7 @@
 #!/bin/bash
 _d="$(pwd)"
 echo "$_d"
-mypcl=$(realpath $(find ../ -type d -name "otf_rbfe"))
+mypcl=$(realpath $(find ~/ -type d -name "otf_rbfe"))
 
 show_help() {
     echo "Usage: $0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN"
@@ -17,7 +17,9 @@ show_help() {
 	echo "  -o, --sssc VALUE                 Set sssc options (1, 2)"
 	echo "  -t, --special VALUE              Set special (true, false)"
 	echo "  -m, --move-to VALUE              Set destination directory"
-    echo "  -h, --help                       Show this help message and exit"
+	echo "  -A, --equil_restr VALUE            Set additional restraints"
+    	echo "  -F, --fpn VALUE        Set number of frames to save per ns"
+     echo "  -h, --help                       Show this help message and exit"
 
 	echo "See README.md for default inputs."
 }
@@ -33,6 +35,8 @@ num_windows=10
 sssc=2
 special=false
 move_to=.
+equil_restr=''
+frames_per_ns=0
 
 #process parameters
 while [[ $# -gt 0 ]]; do
@@ -81,6 +85,14 @@ while [[ $# -gt 0 ]]; do
 			special="$2"
 			shift 2
 			;;
+		-A|--equil_restr)
+			equil_restr="$2"
+			shift 2
+			;;
+		-F|--fpn)
+                        frames_per_ns="$2"
+                        shift 2
+                        ;;
         -h|--help)
             show_help
             exit 0
@@ -109,7 +121,7 @@ do
 	cd $X
 	cp $mypcl/*.py .
 	cp $mypcl/../convergence_test.py .
-	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special"
+	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special" --equil_restr "$equil_restr" --fpn "$frames_per_ns"
 	cd ..
 	mv $X "$move_to"
 done
