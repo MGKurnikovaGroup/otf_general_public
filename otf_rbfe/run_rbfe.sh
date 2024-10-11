@@ -115,12 +115,13 @@ done
 type=$1
 shift 1
 
-
+FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --special $special --equil_restr $equil_restr --fpn $frames_per_ns"
 for X in "$@"
 do
 	cd $X
 	cp $mypcl/*.py .
 	cp $mypcl/../convergence_test.py .
+	echo -e $FLAGS >> otf_log.txt
 	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special" --equil_restr "$equil_restr" --fpn "$frames_per_ns"
 	cd ..
 	mv $X "$move_to"
