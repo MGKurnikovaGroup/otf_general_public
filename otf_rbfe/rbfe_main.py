@@ -34,8 +34,10 @@ parser.add_argument('--schedule', type=str, default='equal', help='schedule for 
 parser.add_argument('--num_windows', type=int, default=10, help='number of lambda windows')
 parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda windows for dcrg and water (comma delimited)')
 parser.add_argument('--sssc', type=int, default=2, help='sssc option (1, 2)')
-parser.add_argument('--special', type=str, default='false', help='special option (true, false)')
+parser.add_argument('--special', type=str, default='site', help='special option for site or water (only relevant when target_lam =! -)')
 parser.add_argument('--equil_restr', type=str, default='', help='additional restraints to add for equilibration, amber mask format')
+parser.add_argument('--target_lam', type=float, default='-1', help='enter the target lambda window for special treatment pf lambda equilibration')
+parser.add_argument('--reference_lam', type=float, default='-1', help='enter the lambda window to be referenced for special treatment of lambda equilibration')
 parser.add_argument('--fpn', type=int, default=0, help='trajectory frames per nanosecond to be saved')
 args=parser.parse_args()
 
@@ -65,16 +67,49 @@ elif args.schedule.lower() == 'custom':
 else:
     raise ValueError('schedule must be equal, gaussian, or custom')
 
-if args.type == 'site':
+if args.target_lam != -1:
+    # Check if target_lam exists in lambdas
+    if args.target_lam not in lambdas:
+        raise ValueError(f'Target lambda {args.target_lam} not found in the lambda schedule')
+
+    if args.reference_lam != -1:
+        # Check if reference_lam exists in lambdas
+        if args.reference_lam not in lambdas:
+            raise ValueError(f'Reference lambda {args.reference_lam} not found in the lambda schedule')
+        # Ensure reference_lam is in schedule
+        print(f'Target lambda {args.target_lam} will be referenced with lambda {args.reference_lam}')
+    else:
+        # Find the closest lambda to target_lam in the lambdas list
+        closest_lam = min(lambdas, key=lambda x: abs(x - args.target_lam))
+        args.reference_lam = closest_lam
+        print(f'Target lambda {args.target_lam} will be referenced with the closest lambda {closest_lam}')
+
+    # Reorder the lambdas list: reference first, target last, others in between
+    remaining_lambdas = [lam for lam in lambdas if lam not in [args.reference_lam, args.target_lam]]
+    ordered_lambdas = [args.reference_lam] + remaining_lambdas + [args.target_lam]
+
+    print(f'New lambda schedule: {ordered_lambdas}')
+else:
+    raise ValueError('Lambda window specified does not exist in the schedule')
+##Throw exception if args.special != site or water
+
+if args.type == 'site': 
     for l in lambdas:
-        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, fpn=args.fpn)
+        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
 elif args.type == 'water':
     for l in lambdas:
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, fpn=args.fpn)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
 elif args.type == 'all':
     for l in lambdas:
-        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, fpn=args.fpn)
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, fpn=args.fpn)
+        if args.special == 'site' and args.target_lam != -1:
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=-1, reference_lam=-1, fpn=args.fpn)
+        elif args.special == 'water' and args.target_lam != -1:
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
+        else:
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
 else:
     raise ValueError('type must be site, water, or all')
 

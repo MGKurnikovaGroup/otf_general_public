@@ -45,7 +45,7 @@ def process_lam(lam):
         lam=lam.split('-')[1]
     return lam
 
-def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc = 2, add_restr='', fpn=0, decorrelate = True):
+def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc = 2, add_restr='', fpn=0, target_lam=-1, special='site', decorrelate = True):
     #Create Directory Architecture
     lam=process_lam(lam)
     if not reference_lam == -1:
@@ -70,10 +70,11 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
     #Run TI
     os.chdir('site')
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        if reference_lam == -1:
+        if lam==target_lam and reference_lam != -1:
+        
             subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
         else:
-            subprocess.call(shlex.split('./md-lambda_special.sh la-'+lam+' la-'+reference_lam+' > la-'+lam+'/std.md.txt'))
+            subprocess.call(shlex.split('./md-lambda_special.sh la-'+str(target_lam)+' la-'+str(reference_lam)+' > la-'+lam+'/std.md.txt'))
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1: #counts number of output files
@@ -95,7 +96,7 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
             break
     os.chdir('..')
 
-def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc=2, fpn=0, decorrelate = True):
+def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc=2, fpn=0, target_lam=-1, special='water', decorrelate = True):
     #Create Directory Architecture
     lam =process_lam(lam)
     if not reference_lam == -1:
@@ -119,10 +120,10 @@ def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, ad
     #Run TI
     os.chdir('water')
     if not os.path.exists("./la-"+lam+'/prod/ligwat_prod_00.out'):
-        if reference_lam == -1:
+        if lam == target_lam and reference_lam != -1:
             subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
         else:
-            subprocess.call(shlex.split('./md-equil_special.sh la-'+lam+' la-'+reference_lam+' > la-'+lam+'/std.md.txt'))
+            subprocess.call(shlex.split('./md-equil_special.sh la-'+str(target_lam)+' la-'+str(reference_lam)+' > la-'+lam+'/std.md.txt'))
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
