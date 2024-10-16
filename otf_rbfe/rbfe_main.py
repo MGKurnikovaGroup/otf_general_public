@@ -31,7 +31,7 @@ parser.add_argument('--first_max', type=float, default=6.5, help='first maximum 
 parser.add_argument('--second_max', type=float, default=6.5, help='second maximum amount of simulation time')
 
 parser.add_argument('--schedule', type=str, default='equal', help='schedule for lambda windows')
-parser.add_argument('--num_windows', type=int, default=10, help='number of lambda windows')
+parser.add_argument('--num_windows', type=int, default=9, help='number of lambda windows')
 parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda windows for dcrg and water (comma delimited)')
 parser.add_argument('--sssc', type=int, default=2, help='sssc option (1, 2)')
 parser.add_argument('--special', type=str, default='site', help='special option for site or water (only relevant when target_lam =! -)')
