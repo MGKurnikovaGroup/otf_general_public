@@ -126,7 +126,7 @@ def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, ad
             print('Special treatment of water la-'+str(target_lam)+' by la-'+str(reference_lam)+'!')
             subprocess.call(shlex.split('./md-equil_special.sh la-'+str(target_lam)+' la-'+str(reference_lam)+' > la-'+lam+'/std.md.txt'))
         else:
-             print('Running nomally water la-'+lam)
+            print('Running nomally water la-'+lam)
             subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
     #Analyze data, restart simulation if necessary
     counter = 0
