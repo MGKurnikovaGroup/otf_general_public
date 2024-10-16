@@ -80,6 +80,8 @@ if args.target_lam != -1:
         print(f'Target lambda {args.target_lam} will be referenced with lambda {args.reference_lam}')
     else:
         # Find the closest lambda to target_lam in the lambdas list
+        target_index = lambdas.index(args.target_lam)
+        target=lambdas.pop(target_index)
         closest_lam = min(lambdas, key=lambda x: abs(x - args.target_lam))
         args.reference_lam = closest_lam
         print(f'Target lambda {args.target_lam} will be referenced with the closest lambda {closest_lam}')
@@ -87,24 +89,25 @@ if args.target_lam != -1:
     # Reorder the lambdas list: reference first, target last, others in between
     remaining_lambdas = [lam for lam in lambdas if lam not in [args.reference_lam, args.target_lam]]
     ordered_lambdas = [args.reference_lam] + remaining_lambdas + [args.target_lam]
-
+    lambdas=ordered_lambdas
     print(f'New lambda schedule: {ordered_lambdas}')
 ##Throw exception if args.special != site or water
 
 if args.type == 'site': 
     for l in lambdas:
-        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
+        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam,special=args.special, fpn=args.fpn)
 elif args.type == 'water':
     for l in lambdas:
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special)
 elif args.type == 'all':
     for l in lambdas:
         if args.special == 'site' and args.target_lam != -1:
-            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
+            print('site and target_lam', args.target_lam)
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special)
             rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=-1, reference_lam=-1, fpn=args.fpn)
         elif args.special == 'water' and args.target_lam != -1:
             rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn)
-            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special)
         else:
             rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn)
             rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn)

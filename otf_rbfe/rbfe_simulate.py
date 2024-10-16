@@ -70,9 +70,11 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
     #Run TI
     os.chdir('site')
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        if lam==target_lam and reference_lam != -1:
+        if lam==str(target_lam) and reference_lam != -1 and special=='site':
+            print('Special treatment of site la-'+str(target_lam)+' by la-'+str(reference_lam)+'!')
             subprocess.call(shlex.split('./md-lambda_special.sh la-'+str(target_lam)+' la-'+str(reference_lam)+' > la-'+lam+'/std.md.txt'))
         else:
+            print('Running nomally site la-'+lam)
             subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
         
     #Analyze data, restart simulation if necessary
@@ -120,9 +122,11 @@ def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, ad
     #Run TI
     os.chdir('water')
     if not os.path.exists("./la-"+lam+'/prod/ligwat_prod_00.out'):
-        if lam == target_lam and reference_lam != -1:
+        if lam == str(target_lam) and reference_lam != -1 and special=='water':
+            print('Special treatment of water la-'+str(target_lam)+' by la-'+str(reference_lam)+'!')
             subprocess.call(shlex.split('./md-equil_special.sh la-'+str(target_lam)+' la-'+str(reference_lam)+' > la-'+lam+'/std.md.txt'))
         else:
+             print('Running nomally water la-'+lam)
             subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
     #Analyze data, restart simulation if necessary
     counter = 0

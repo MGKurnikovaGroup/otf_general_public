@@ -15,7 +15,6 @@ show_help() {
 	echo "  -n, --num-windows VALUE          Set number of windows"
 	echo "  -C, --custom-windows x,y,z       Set custom windows"
 	echo "  -o, --sssc VALUE                 Set sssc options (1, 2)"
-	echo "  -t, --special VALUE              Set special (true, false)"
 	echo "  -m, --move-to VALUE              Set destination directory"
 	echo "  -A, --equil_restr VALUE            Set additional restraints"
     	echo "  -F, --fpn VALUE        Set number of frames to save per ns"
@@ -35,7 +34,6 @@ second_max=10.5
 schedule='equal'
 num_windows=10
 sssc=2
-special=false
 move_to=.
 equil_restr=''
 frames_per_ns=0
@@ -86,10 +84,6 @@ while [[ $# -gt 0 ]]; do
 			move_to="$2"
 			shift 2
 			;;
-		-p|--special)
-			special="$2"
-			shift 2
-			;;
 		-A|--equil_restr)
 			equil_restr="$2"
 			shift 2
@@ -132,7 +126,7 @@ done
 type=$1
 shift 1
 
-FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --special $special --equil_restr $equil_restr --fpn $frames_per_ns"
+FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --special $special --target_lam $target_lam --reference_lam $reference_lam --equil_restr $equil_restr --fpn $frames_per_ns"
 for X in "$@"
 do
 	cd $X
