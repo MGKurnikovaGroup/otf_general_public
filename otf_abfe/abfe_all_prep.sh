@@ -1,6 +1,6 @@
 #!/bin/bash
 mywd=$(pwd)
-mypcl=$(realpath $(find ../ -type d -name "otf_abfe"))
+mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
 
 show_help() {
     echo "Usage: $0 [options] dir1 dir2 ... dirN"

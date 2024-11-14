@@ -6,7 +6,7 @@ Implementation of On-The-Fly (OTF) Optimization for alchemical binding free ener
 
 1. Create a directory, clone otf_general.
 2. Install [Anaconda](https://docs.anaconda.com/anaconda/install/)
-3. Install dependencies: pymbar==4.0.3, alchemlyb==2.3.1, scipy==1.8.1:
+3. Install dependencies: pymbar==4.0.3, alchemlyb==2.3.1, scipy==1.8.1, AMBER20, GAUSSIAN 09 or GAUSSIAN 16 (for ligand parameterization):
 
 
 ### **Absolute binding free energy**
@@ -40,9 +40,9 @@ Implementation of algorithm for the automated selection of protein and ligand at
 Show Help: ```./auto_restraint.sh -h```
 ##### Usage:
 
-1. Navigate to otf_abfe/auto_restraint_files
+1. Copy otf_general/otf_abfe/auto_restraint_files/auto_restraint.sh to your working directory. Note: Working directory should be outside of otf_general.
 2. Run the following
-3. Note: the inputted directories should contain all the data files (see Options below). They should also be located just one level under otf_general, like otf_abfe.
+3. Note: the inputed directories should contain all the data files (see Options below). They should also be located just one level under otf_general, like otf_abfe.
 
 ```
 ./auto_restraint.sh <options> <directories>
@@ -69,7 +69,7 @@ Default values (if no input specified):
 | `trajectory_file`      | `nvt-7ns.nc`               |
 | `ligand_res_name`      | `MOL`                      |
 | `protein_res_id_start` | `2`                        |
-| `protein_res_id_end`   | `357`                      |
+| `protein_res_id_end`   | `163`                      |
 | `fraction_cutoff`      | `0.5`                      |
 | `ligand_file`          | `setup/lig_tleap.mol2`     |
 | `pdb_file`             | `complex-repres.pdb`       |

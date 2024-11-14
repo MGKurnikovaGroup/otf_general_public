@@ -1,5 +1,5 @@
 #!/bin/bash
-
+mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
 show_help() {
     echo "Usage: $0 [options] dir1 dir2 ... dirN"
     echo "Options:"
@@ -7,7 +7,7 @@ show_help() {
     echo "  -t, --trajectory-file FILE   trajectory file (default: nvt-7ns.nc)"
     echo "  -l, --ligand-res-name NAME   ligand residue name (default: MOL)"
     echo "  -s, --protein-res-id-start ID   protein residue id start (default: 2)"
-    echo "  -e, --protein-res-id-end ID   protein residue id end (default: 357)"
+    echo "  -e, --protein-res-id-end ID   protein residue id end (default: 163)"
     echo "  -f, --fraction-cutoff FLOAT  fraction cutoff (default: 0.5)"
     echo "  -L, --ligand-file FILE       ligand file (default: setup/lig_tleap.mol2)"
     echo "  -P, --pdb-file FILE          pdb file (default: complex-repres.pdb)"
@@ -18,7 +18,7 @@ topology_file="complex.prmtop"
 trajectory_file="nvt-7ns.nc"
 ligand_res_name="MOL"
 protein_res_id_start="2"
-protein_res_id_end="357"
+protein_res_id_end="163"
 fraction_cutoff="0.5"
 ligand_file="setup/lig_tleap.mol2"
 pdb_file="complex-repres.pdb"
@@ -95,10 +95,10 @@ for X in "$@"
 do
         echo =====  $X  =======================
         cd $X
-	    cp ../otf_abfe/auto_restraint_files/auto_restraint.sh .
-        cp ../otf_abfe/auto_restraint_files/cpptraj.restraint.sh .
-        cp ../otf_abfe/auto_restraint_files/restraint_analysis.py .
-        cp ../otf_abfe/auto_restraint_files/restraint_analysis_functions.py .
+	cp $mypcl/auto_restraint_files/auto_restraint.sh .
+        cp $mypcl/auto_restraint_files/cpptraj.restraint.sh .
+        cp $mypcl/auto_restraint_files/restraint_analysis.py .
+        cp $mypcl/auto_restraint_files/restraint_analysis_functions.py .
         ./cpptraj.restraint.sh -P "$topology_file" -t "$trajectory_file" -l "$ligand_res_name" -r "$protein_res_id"
         python3 restraint_analysis.py "$fraction_cutoff" md-complex/BB.avg.dat md-complex/BB2.avg.dat "$ligand_file" "$pdb_file"
         echo =====  $X  Done =======================
