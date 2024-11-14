@@ -11,7 +11,7 @@ Implementation of On-The-Fly (OTF) Optimization for alchemical binding free ener
 
 ### **Absolute binding free energy**
 
-### **Parameterization**
+#### **Parameterization**
 ***
 Parameterization of Protein-Ligand Complex and Solvated Ligand for absolute binding free energy simulations.
 
