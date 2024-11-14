@@ -1,23 +1,34 @@
 # otf_general
 
-[Description] ... using AMBER20. 
+Implementation of On-The-Fly (OTF) Optimization for alchemical binding free energy simulations using thermodynamic integration in AMBER20. See 10.26434/chemrxiv-2023-rtpsz for details.
 
 ## Setup
 
-1. Create a directory, clone otf_general into that directory. This parent directory will be needed for the simulations.
+1. Create a directory, clone otf_general.
 2. Install [Anaconda](https://docs.anaconda.com/anaconda/install/)
-3. Install pymbar and alchemlyb:
-```
-pip install pymbar
-pip install alchemlyb
-```
+3. Install dependencies: pymbar==4.0.3, alchemlyb==2.3.1, scipy==1.8.1:
 
 
-## Simulations
-***
 ### **Absolute binding free energy**
+
+### **Parameterization**
 ***
-[Description]
+Parameterization of Protein-Ligand Complex and Solvated Ligand for absolute binding free energy simulations.
+
+Usage:
+
+1. Copy otf_general/otf_abfe/parameterization directory to working directory. Copy parameterization/*.sh to working directory.
+2. Copy a pdb of your protein with hydrogens added and without the ligand as input-for-prep/protein_H.pdb. Note: This pdb can be solvated with ions added or not. If not, make the required changes to tleap.complex.in to solvated and neutralize your system.
+3. Run ./all-prep-lig-g16.sh or ./all-prep-lig-g09.sh as required by your Gaussian installation with your ligand files as input. Update the parameters within these shell scripts as needed to match your machine, ligand charge, etc.
+4. Note: If no waters are within 1.0 angstroms of your molecule, complex.prmtop and complex.inpcrd will fail to generate. One should simply copy the complex0.prmtop and complex0.inpcrd from the ligand setup directory to the ligand md-complex directory as complex.prmtop and complex.inpcrd
+
+### **Conventional MD**
+***
+Protocol for perform short 
+***
+
+
+Implementation of OTF Optimization for absolute binding free energy simulations. Protocol begins with parameterization of ligand and protein-ligand complex.
 
 Usage:
 
