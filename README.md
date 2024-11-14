@@ -17,16 +17,67 @@ Parameterization of Protein-Ligand Complex and Solvated Ligand for absolute bind
 
 Usage:
 
-1. Copy otf_general/otf_abfe/parameterization directory to working directory. Copy parameterization/*.sh to working directory.
-2. Copy a pdb of your protein with hydrogens added and without the ligand as input-for-prep/protein_H.pdb. Note: This pdb can be solvated with ions added or not. If not, make the required changes to tleap.complex.in to solvated and neutralize your system.
-3. Run ./all-prep-lig-g16.sh or ./all-prep-lig-g09.sh as required by your Gaussian installation with your ligand files as input. Update the parameters within these shell scripts as needed to match your machine, ligand charge, etc.
-4. Note: If no waters are within 1.0 angstroms of your molecule, complex.prmtop and complex.inpcrd will fail to generate. One should simply copy the complex0.prmtop and complex0.inpcrd from the ligand setup directory to the ligand md-complex directory as complex.prmtop and complex.inpcrd
+1. Create working directory outside of otf_general.
+2. Copy otf_general/otf_abfe/parameterization directory to working directory. Copy parameterization/*.sh to working directory.
+3. Copy a pdb of your protein with hydrogens added and without the ligand as input-for-prep/protein_H.pdb. Note: This pdb can be solvated with ions added or not. If not, make the required changes to tleap.complex.in to solvated and neutralize your system.
+4. Run ./all-prep-lig-g16.sh or ./all-prep-lig-g09.sh as required by your Gaussian installation with your ligand files as input. Update the parameters within these shell scripts as needed to match your machine, ligand charge, etc.
+5. Note: If no waters are within 1.0 angstroms of your molecule, complex.prmtop and complex.inpcrd will fail to generate. One should simply copy the complex0.prmtop and complex0.inpcrd from the ligand setup directory to the ligand md-complex directory as complex.prmtop and complex.inpcrd
 
-### **Conventional MD**
+#### **Conventional MD**
 ***
-Protocol for perform short 
+Protocol for performing short conventional MD simulations of the protein-ligand complex to extract representative structures and heavy atoms for Boresch restraints. Performs 7ns of MD, see preprint for details.
+
+Usage:
+
+1. Copy otf_general/otf_abfe/conventional_MD/*sh to working directory. Working directory should be outside of otf_abfe.
+2. Run ./all-copy-pcl.sh on all protein-ligand complex directories obtained from Parameterization Step.
+3. Run ./all-run-7ns.sh on all protein-ligand complex directories.
 ***
 
+#### Automated restraint analysis
+Implementation of algorithm for the automated selection of protein and ligand atoms for Boresch restraints from Chen et al.: 10.1021/acs.jcim.3c00013
+
+Show Help: ```./auto_restraint.sh -h```
+##### Usage:
+
+1. Navigate to otf_abfe/auto_restraint_files
+2. Run the following
+3. Note: the inputted directories should contain all the data files (see Options below). They should also be located just one level under otf_general, like otf_abfe.
+
+```
+./auto_restraint.sh <options> <directories>
+```
+##### Options:
+
+| Option | Description                                |
+|--------|--------------------------------------------|
+| `-p`   | topology file (string of path name)        |
+| `-t`   | trajectory file (string of path name)      |
+| `-l`   | ligand residue name (string)               |
+| `-s`   | protein residue id, start of range (int)   |
+| `-e`   | protein residue id, end of range (int)     |
+| `-f`   | fraction cutoff (float)                    |
+| `-L`   | ligand file (string of path name)          |
+| `-P`   | pdb file (string of path name)             |
+
+Default values (if no input specified):
+
+
+| Option                 | Default Value              |
+|------------------------|----------------------------|
+| `topology_file`        | `complex.prmtop`           |
+| `trajectory_file`      | `nvt-7ns.nc`               |
+| `ligand_res_name`      | `MOL`                      |
+| `protein_res_id_start` | `2`                        |
+| `protein_res_id_end`   | `357`                      |
+| `fraction_cutoff`      | `0.5`                      |
+| `ligand_file`          | `setup/lig_tleap.mol2`     |
+| `pdb_file`             | `complex-repres.pdb`       |
+
+Example:
+```
+cd auto_restraint_files
+./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 357 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb ../lysozyme_test_case_restraints ../dir2 ../dir3
 
 Implementation of OTF Optimization for absolute binding free energy simulations. Protocol begins with parameterization of ligand and protein-ligand complex.
 

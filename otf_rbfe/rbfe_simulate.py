@@ -82,7 +82,7 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1: #counts number of output files
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
     site_data = ct.analyze(lam, decorrelate=decorrelate)
-    while (not ct.check_convergence(site_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(site_data) <= 50: #Checks convergence criteria
+    while (not ct.check_convergence(site_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(site_data) <= 50: #Checks convergence criteria
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
             update_input(lam, directory_path+'/site/prod/restart.in', './la-'+lam+'/prod/restart.in', in_loc, sssc, prod=True, nstlim=additional_time, frames_per_ns = fpn)
@@ -92,10 +92,10 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         else:
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        counter += 1
-        site_data=ct.analyze(lam, decorrelate = decorrelate)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
+        counter += 1
+        site_data=ct.analyze(lam, decorrelate = decorrelate)
     os.chdir('..')
 
 def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc=2, fpn=0, target_lam=-1, special='water', decorrelate = True):
@@ -146,9 +146,9 @@ def water_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, ad
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         else:
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        counter += 1
-        wat_data=ct.analyze(lam, decorrelate = decorrelate)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
+        counter += 1
+        wat_data=ct.analyze(lam, decorrelate = decorrelate)
     os.chdir('..')
 

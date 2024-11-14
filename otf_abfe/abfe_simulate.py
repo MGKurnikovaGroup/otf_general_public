@@ -107,7 +107,7 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
     dcrg_data = ct.analyze(lam,decorrelate=True)
-    while (not ct.check_convergence(dcrg_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(dcrg_data) <= 50:
+    while (not ct.check_convergence(dcrg_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(dcrg_data) <= 50:
         #Currently allows 8 restarts (4ns extra)
         #Requires 50 samples to continue
         #restart_lam.sh first argument: lamdba window
@@ -122,10 +122,10 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         else:
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        counter += 1
-        dcrg_data=ct.analyze(lam,decorrelate=True)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
+        counter += 1
+        dcrg_data=ct.analyze(lam,decorrelate=True)
     os.chdir('..')
 
 def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_time, max_time_1, max_time_2, sssc):
@@ -157,7 +157,7 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
     wat_data = ct.analyze(lam, decorrelate=True)
-    while (not ct.check_convergence(wat_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(wat_data) <= 50:
+    while (not ct.check_convergence(wat_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(wat_data) <= 50:
         #restart_lam.sh first argument: lamdba window
         #2nd argument: Suffix of new .out file
         #3rd: sufficx of restart file to use
@@ -170,10 +170,10 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         else:
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        counter += 1
-        wat_data=ct.analyze(lam, decorrelate=True)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
+        counter += 1
+        wat_data=ct.analyze(lam, decorrelate=True)
     os.chdir('..')
 
 def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_time, max_time_1, max_time_2):
@@ -199,7 +199,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
     rtr_data =ct.analyze_rtr(lam, decorrelate=True)
-    while (not ct.check_convergence(rtr_data, convergence_cutoff)[0] and counter <= math.floor((max_time_1-initial_time)/additional_time)) or len(rtr_data) <= 50:
+    while (not ct.check_convergence(rtr_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(rtr_data) <= 50:
         #Currently allows 8 restarts (4ns extra)
         #Requires 50 samples to continue
         #restart_lam.sh first argument: lamdba window
@@ -216,9 +216,9 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
             update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
                     str(counter_quotient)+str(counter_remainder+1), nstlim=additional_time)
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        counter += 1
-        rtr_data=ct.analyze_rtr(lam, decorrelate=True)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
+        counter += 1
+        rtr_data=ct.analyze_rtr(lam, decorrelate=True)
     os.chdir('..')
 
