@@ -35,7 +35,7 @@ ligand_res_name="MOL"
 
 protein_res_id_start="2"
 
-protein_res_id_end="357"
+protein_res_id_end="163"
 
 fraction_cutoff="0.5"
 
