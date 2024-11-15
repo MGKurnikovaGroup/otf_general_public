@@ -1,6 +1,7 @@
 # otf_abfe
 
 Implementation of On-The-Fly (OTF) Optimization for alchemical absolute binding free energy simulations using thermodynamic integration in AMBER20. See 10.26434/chemrxiv-2023-rtpsz for details.
+See test_cases for PLpro and lysosozyme example systems and directory architecture.
 
 ### **Parameterization**
 ***
@@ -38,28 +39,29 @@ Protocol for performing short conventional MD simulations of the protein-ligand 
 ***
 `./all-copy-pcl.sh <directories>`
 `./all-run-7ns.sh <directories>`
-`./
+`./all-rmsd-avg.sh <directories>`
+`./all-get-repres.sh <directories>`
 
-####Required Output:
+#### ***Required Output: ***
 ***
 1. complex-repres.[pdb, rst7, prmtop] or equivalent files
 
-### Automated restraint analysis
+### **Automated restraint analysis**
 ***
 Implementation of algorithm for the automated selection of protein and ligand atoms for Boresch restraints from Chen et al.: 10.1021/acs.jcim.3c00013. Assumes completed conventional MD with extracted representative structures.
 
-Show Help: ```./auto_restraint.sh -h```
-##### Usage:
+Show Help: `./auto_restraint.sh -h`
 
+#### ***Usage:***
+***
 1. Copy otf_general/otf_abfe/auto_restraint_files/auto_restraint.sh to your working directory. Note: Working directory should be outside of otf_general.
 2. Run ./auto_restraint.sh on all protein-ligand complex directories.
 3. Note: the inputed directories should contain all the data files (see Options below).
 
-```
-./auto_restraint.sh <options> <directories>
-```
-##### Options:
+`./auto_restraint.sh <options> <directories>`
 
+#### ***Options:***
+***
 | Option | Description                                |
 |--------|--------------------------------------------|
 | `-p`   | topology file (string of path name)        |
@@ -91,7 +93,8 @@ cd auto_restraint_files
 ./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 163 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb lysozyme*
 
 ```
-#####Required Outputs:
+#### ***Required Outputs:***
+***
 1. vbla.txt: list of ligand heavy atoms for Boresch restraints.
 2. vbla2.txt: list of protein backbone atoms for Boresch restraints.
 
