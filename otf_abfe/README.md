@@ -29,7 +29,7 @@ Parameterization of Protein-Ligand Complex and Solvated Ligand for absolute bind
 ***
 Protocol for performing short conventional MD simulations of the protein-ligand complex to extract representative structures and heavy atoms for Boresch restraints. Performs 7ns of MD, see preprint for details.
 
-####Usage:
+#### ***Usage:***
 ***
 1. Copy otf_general/otf_abfe/conventional_MD/*sh to working directory. Working directory should be outside of otf_abfe.
 2. Run ./all-copy-pcl.sh on all protein-ligand complex directories obtained from Parameterization Step.
