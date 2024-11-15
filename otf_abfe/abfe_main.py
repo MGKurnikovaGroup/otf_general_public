@@ -15,7 +15,7 @@ parser.add_argument('--schedule', type=str, default='equal', help='schedule for 
 parser.add_argument('--num_windows', type=int, default=10, help='number of lambda windows')
 parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda window for dcrg and water (comma delimited)')
 parser.add_argument('--rtr_window', type=str, default='0.0,0.05,0.1,0.2,0.5,1.0', help='list of lambda windows for rtr (comma delimited)')
-parser.add_argument('--sssc', type=int, default=2, help='sssc option (1, 2)')
+parser.add_argument('--sssc', type=int, default=2, help='sssc option (0, 1, 2), 0 does not use smoothstep')
 
 args=parser.parse_args()
 
@@ -29,10 +29,10 @@ gaussian_windows = {1:[0.5],
 
 #Creating lambda windows
 if args.schedule.lower() == 'equal':
-    if args.sssc == 1:
+    if args.sssc == 0:
         lambdas = [i/args.num_windows-1 for i in range(args.num_windows)]
     else:
-        assert(args.sssc == 2)
+        assert(args.sssc == 1 or args.sssc == 2)
         lambdas = [(i+1)/(args.num_windows+1) for i in range(args.num_windows)]
 elif args.schedule.lower() == 'gaussian':
     if args.num_windows not in gaussian_windows:

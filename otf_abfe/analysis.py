@@ -8,8 +8,6 @@ import numpy as np
 from pymbar import timeseries
 import sys
 from sklearn.utils import resample
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
 import convergence_test as ct
 
 # constants
@@ -68,30 +66,12 @@ with open("dcrg_hist.txt", 'w') as f:
     f.write(str(dHdl_ssmp_indices0)+'\n'+str(dvar0))
 f.close()
 
-#Model Data
-X=np.array(complex_lams)
-y=np.array(dmean0)
-dy=np.array(dvar0)/y.std()**2
-comp_kernel = RBF(0.1, (1e-4, 1.0))
-x=np.atleast_2d(np.linspace(0,1,1001)).T
-comp_gp = GaussianProcessRegressor(kernel=comp_kernel, alpha=dy,
-                            n_restarts_optimizer=10, normalize_y=True)
-comp_gp.fit(X.reshape(-1, 1), y)
-y_pred, sigma = comp_gp.predict(x, return_std=True)
-
-print("Numeric dcrg+vdw: ", np.trapz(dmean0, complex_lams)*k_b*temp)
+print("dcrg+vdw: ", np.trapz(dmean0, complex_lams)*k_b*temp)
 dg_var = 0
 for i in range(len(dvar0)-1):
     dg_var += ((complex_lams[i+1]-complex_lams[i])/2)**2 * (dvar0[i]+dvar0[i+1])
 dg_var *= (k_b*temp)**2
-print("Numeric dcrg+vdw SE: ", dg_var**.5)
-print("GP dcrg+vdw: ", np.trapz(y_pred, x.squeeze())*k_b*temp)
-dg_var_gp = 0
-for i in range(len(sigma)-1):
-    dg_var_gp += ((x.squeeze()[i+1]-x.squeeze()[i])/2)**2 * (sigma[i]**2+sigma[i+1]**2)
-dg_var_gp *= (k_b*temp)**2
-print("GP dcrg+vdw SE: ", dg_var_gp**.5)
-
+print("dcrg+vdw SE: ", dg_var**.5)
 
 #WATER STEP
 watlist0 = glob.glob('./water-dcrg+vdw/la*/prod/*.out*')
@@ -135,29 +115,12 @@ wat_lams.append(1)
 wmean0.append(0)
 wvar0.append(0)
 
-#Model Data
-Xw=np.array(wat_lams)
-yw=np.array(wmean0)
-dyw=np.array(wvar0)/yw.std()**2
-wcomp_kernel = RBF(0.1, (1e-4, 1.0))
-xw=np.atleast_2d(np.linspace(0,1,1001)).T
-wcomp_gp = GaussianProcessRegressor(kernel=wcomp_kernel, alpha=dyw,
-                            n_restarts_optimizer=10, normalize_y=True)
-wcomp_gp.fit(Xw.reshape(-1, 1), yw)
-yw_pred, wsigma = wcomp_gp.predict(xw, return_std=True)
-
-print("Numeric water-dcrg+vdw: ", np.trapz(wmean0, wat_lams)*k_b*temp)
+print("water-dcrg+vdw: ", np.trapz(wmean0, wat_lams)*k_b*temp)
 dg_varw = 0
 for i in range(len(wvar0)-1):
     dg_varw += ((wat_lams[i+1]-wat_lams[i])/2)**2 * (wvar0[i]+wvar0[i+1])
 dg_varw *= (k_b*temp)**2
-print("Numeric water-dcrg+vdw SE: ", dg_varw**.5)
-print("GP water-dcrg+vdw: ", np.trapz(yw_pred, xw.squeeze())*k_b*temp)
-dg_varw_gp = 0
-for i in range(len(wsigma)-1):
-    dg_varw_gp += ((xw.squeeze()[i+1]-xw.squeeze()[i])/2)**2 * (wsigma[i]**2+wsigma[i+1]**2)
-dg_varw_gp *= (k_b*temp)**2
-print("GP water-dcrg+vdw SE: ", dg_varw_gp**.5)
+print("water-dcrg+vdw SE: ", dg_varw**.5)
 
 ## RTR STEP
 
@@ -188,28 +151,11 @@ for j in range(len(rdHdl_ssmp0)):
     rmean0.append(boot_mean1.mean())
     rvar0.append(boot_mean1.std()**2)
 
-#Model Data
-Xr=np.array(rtr_lams)
-yr=np.array(rmean0)
-dry=np.array(rvar0)/yr.std()**2
-rcomp_kernel = RBF(0.1, (1e-4, 1.0))
-xr=np.atleast_2d(np.linspace(0,1,1001)).T
-rcomp_gp = GaussianProcessRegressor(kernel=rcomp_kernel, alpha=dry,
-                            n_restarts_optimizer=10, normalize_y=True)
-rcomp_gp.fit(Xr.reshape(-1, 1), yr)
-yr_pred, rsigma = rcomp_gp.predict(xr, return_std=True)
-
-print("Numeric rtr: ", np.trapz(rmean0, rtr_lams))
+print("rtr: ", np.trapz(rmean0, rtr_lams))
 dg_varr = 0
 for i in range(len(rvar0)-1):
     dg_varr += ((rtr_lams[i+1]-rtr_lams[i])/2)**2 * (rvar0[i]+rvar0[i+1])
-print("Numeric RTR SE: ", dg_varr**.5)
-print("GP RTR: ", np.trapz(yr_pred, xr.squeeze()))
-dg_varr_gp = 0
-for i in range(len(rsigma)-1):
-    dg_varr_gp += ((xr.squeeze()[i+1]-xr.squeeze()[i])/2)**2 * (rsigma[i]**2+rsigma[i+1]**2)
-print("GP water-dcrg+vdw SE: ", dg_varr_gp**.5)
-
+print("rtr SE: ", dg_varr**.5)
 ref_list, k_list = ct.parse_lists(True)
 
 #Apply Boresch Formula
@@ -242,27 +188,22 @@ arg =(
 
 boresch = - K * temp * math.log(arg)/4.184
 
-print('Numeric dG: ', np.trapz(wmean0, wat_lams)*k_b*temp - boresch - np.trapz(rmean0, rtr_lams)*k_b*temp - np.trapz(dmean0, complex_lams)*k_b*temp)
-print('GP dG: ', np.trapz(yw_pred, xw.squeeze())*k_b*temp - boresch - np.trapz(yr_pred, xr.squeeze())*k_b*temp-np.trapz(y_pred, x.squeeze())*k_b*temp)
+print('dG: ', np.trapz(wmean0, wat_lams)*k_b*temp - boresch - np.trapz(rmean0, rtr_lams)*k_b*temp - np.trapz(dmean0, complex_lams)*k_b*temp)
 
 dG_mean_n = np.trapz(wmean0, wat_lams)*k_b*temp - boresch - np.trapz(rmean0, rtr_lams) - np.trapz(dmean0, complex_lams)*k_b*temp
-dG_mean_g = np.trapz(yw_pred, xw.squeeze())*k_b*temp - boresch - np.trapz(yr_pred, xr.squeeze())-np.trapz(y_pred, x.squeeze())*k_b*temp
 dcrg_n = np.trapz(dmean0, complex_lams)*k_b*temp
-dcrg_g = np.trapz(y_pred, x.squeeze())*k_b*temp
 rtr_n = np.trapz(rmean0, rtr_lams)
-rtr_g = np.trapz(yr_pred, xr.squeeze())
 wat_n = np.trapz(wmean0, wat_lams)*k_b*temp
-wat_g = np.trapz(yw_pred, xw.squeeze())*k_b*temp
 
-df_array = np.around([dG_mean_n, dG_mean_g,
-                 dcrg_n, dcrg_g,
-                 rtr_n, rtr_g,
-                 wat_n, wat_g,
+df_array = np.around([dG_mean_n,
+                 dcrg_n,
+                 rtr_n,
+                 wat_n,
                  boresch],decimals=2)
 
 df=pd.DataFrame(df_array).transpose()
-df.columns=['dG_n', 'dG_g', 'dcrg_n', 'dcrg_g',
-            'rtr_n', 'rtr_g', 'water_n', 'water_g', 'Boresch']
+df.columns=['dG_n', 'dcrg_n',
+            'rtr_n', 'water_n', 'Boresch']
 
 df.to_csv('summary.dat', sep='\t', index=False)
 

@@ -28,7 +28,6 @@ def update_input(lam, loc, dest, sssc, prod=False, nstlim=0):
 
         #sssc options: 2 - leave as is, 1 - change values below
         if sssc == 1:
-            data = data.replace('gti_lam_sch = 1', 'gti_lam_sch = 0')
             data = data.replace('scalpha=0.2', 'scalpha=0.5')
             data = data.replace('scbeta=50.0', 'scbeta=12.0')
             
@@ -96,20 +95,15 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
     update_input(lam, directory_path+'/dcrg+vdw/prod/prod.in', "./dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time)
     
     #Run TI
-    #If out file already exists, don't mess with it for now
-    #Probably should remove or edit this functionality in the future
     os.chdir('dcrg+vdw')
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt')) #Script needs to be updated
-    print('h')
+        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
     dcrg_data = ct.analyze(lam,decorrelate=True)
     while (not ct.check_convergence(dcrg_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(dcrg_data) <= 50:
-        #Currently allows 8 restarts (4ns extra)
-        #Requires 50 samples to continue
         #restart_lam.sh first argument: lamdba window
         #2nd argument: Suffix of new .out file
         #3rd: sufficx of restart file to use
@@ -151,7 +145,6 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
     os.chdir('water-dcrg+vdw')
     if not os.path.exists("./la-"+lam+'/prod/ligwat_prod_00.out'):
         subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt')) 
-    #Script needs to be updated
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
@@ -192,7 +185,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
     os.chdir('rtr')
 
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt')) #Script needs to be updated
+        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
 
     #Analyze data, restart simulation if necessary
     counter = 0
@@ -200,8 +193,6 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
         counter = len(glob.glob('./la-'+lam+'/prod/*.out')) - 1
     rtr_data =ct.analyze_rtr(lam, decorrelate=True)
     while (not ct.check_convergence(rtr_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(rtr_data) <= 50:
-        #Currently allows 8 restarts (4ns extra)
-        #Requires 50 samples to continue
         #restart_lam.sh first argument: lamdba window
         #2nd argument: Suffix of new .out file
         #3rd: sufficx of restart file to use

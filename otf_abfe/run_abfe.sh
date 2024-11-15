@@ -1,22 +1,7 @@
 #!/bin/bash
 mywd=$(pwd)
 
-#Loop to find otf_abfe absolute path
-# current_dir=$(pwd)
-# while [ "$current_dir" != "/" ]; do
-#     if [ -d "$current_dir/otf_abfe" ]; then
-#         mypcl="$current_dir/otf_abfe"
-#         break
-#     fi
-#     parent_dir=$(dirname "$current_dir")
-#     current_dir="$parent_dir"
-# done
-
-# if [ "$current_dir" == "/" ]; then
-#     echo "Directory 'otf_abfe' not found."
-# fi
-# mypcl=$(find ../ -type d -name "otf_abfe")
-mypcl=$(realpath $(find ../ -type d -name "otf_abfe"))
+mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
 
 show_help() {
     echo "Usage: $0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN"
@@ -30,9 +15,11 @@ show_help() {
 	echo "  -n, --num-windows VALUE          Set number of windows"
 	echo "  -C, --custom-window x,y,z       Set custom windows"
 	echo "  -r, --rtr_window x,y,z           Set rtr window"
-	echo "  -o, --sssc VALUE                 Set sssc options (1, 2)"
+	echo "  -o, --sssc VALUE                 Set sssc alpha and beta options (1, 2)"
 	echo "  -m, --move-to VALUE              Set destination directory"
     echo "  -h, --help                       Show this help message and exit"
+	echo "  -A, --equil_restr VALUE            Set additional restraints"
+        echo "  -F, --fpn VALUE        Set number of frames to save per ns"
 
 	echo "See README.md for default inputs."
 }
@@ -50,6 +37,9 @@ num_windows=10
 rtr_window='0.0,0.05,0.1,0.2,0.5,1.0'
 sssc=2
 move_to=.
+equil_restr=''
+frames_per_ns=0
+
 
 #process parameters
 while [[ $# -gt 0 ]]; do
@@ -98,6 +88,15 @@ while [[ $# -gt 0 ]]; do
 			move_to="$2"
 			shift 2
 			;;
+		-A|--equil_restr)
+                        equil_restr="$2"
+                        shift 2
+                        ;;
+                -F|--fpn)
+                        frames_per_ns="$2"
+                        shift 2
+                        ;;
+
         -h|--help)
             show_help
             exit 0
@@ -135,13 +134,13 @@ echo "directories = $@"
 echo "otf_abfe directory: $mypcl"
 echo "moving to: $move_to"
 
+FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --equil_restr $equil_restr --fpn $frames_per_ns"
 for X in "$@"
 do
 	echo =====  $X  =======================
 	cd $X
 	cp $mypcl/*.py .
-	cp $mypcl/../convergence_test.py .
-	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --rtr_window "$rtr_window" --sssc "$sssc"
+	python3 abfe_main.py "$mypcl" "$type" --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --rtr_window "$rtr_window" --sssc "$sssc" --equil_rest "$equil_restr" --fpn "$frames_per_ns"
 	cd ..
 	mv $X "$move_to"
 done 

@@ -15,7 +15,7 @@ Implementation of On-The-Fly (OTF) Optimization for alchemical binding free ener
 ***
 Parameterization of Protein-Ligand Complex and Solvated Ligand for absolute binding free energy simulations.
 
-Usage:
+#####Usage:
 
 1. Create working directory outside of otf_general.
 2. Copy otf_general/otf_abfe/parameterization directory to working directory. Copy parameterization/*.sh to working directory.
@@ -23,11 +23,17 @@ Usage:
 4. Run ./all-prep-lig-g16.sh or ./all-prep-lig-g09.sh as required by your Gaussian installation with your ligand files as input. Update the parameters within these shell scripts as needed to match your machine, ligand charge, etc.
 5. Note: If no waters are within 1.0 angstroms of your molecule, complex.prmtop and complex.inpcrd will fail to generate. One should simply copy the complex0.prmtop and complex0.inpcrd from the ligand setup directory to the ligand md-complex directory as complex.prmtop and complex.inpcrd
 
+#####Required Output:
+
+1. complex.[pdb, inpcrd, prmtop]
+2. ligwat.[pdb, inpcrd, prmtop]
+3. lig_tleap.mol2
+
 #### **Conventional MD**
 ***
 Protocol for performing short conventional MD simulations of the protein-ligand complex to extract representative structures and heavy atoms for Boresch restraints. Performs 7ns of MD, see preprint for details.
 
-Usage:
+#####Usage:
 
 1. Copy otf_general/otf_abfe/conventional_MD/*sh to working directory. Working directory should be outside of otf_abfe.
 2. Run ./all-copy-pcl.sh on all protein-ligand complex directories obtained from Parameterization Step.
@@ -35,6 +41,10 @@ Usage:
 4. Run ./all-rmsd-avg.sh on all protein-ligand complex directories with completed MD simulations. Note: you must update the respective cpptraj input script if you change the length/ligand name/simulation details.
 5. Run ./all-get-repres.sh on all protein-ligand complex directories with completed RMSD analysis to extract representative structures for ABFE. 
 ***
+
+#####Required Output:
+
+1. complex-repres.[pdb, rst7, prmtop] or equivalent files
 
 #### Automated restraint analysis
 Implementation of algorithm for the automated selection of protein and ligand atoms for Boresch restraints from Chen et al.: 10.1021/acs.jcim.3c00013. Assumes completed conventional MD with extracted representative structures.
@@ -81,15 +91,26 @@ Example:
 cd auto_restraint_files
 ./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 163 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb lysozyme*
 
-Implementation of OTF Optimization for absolute binding free energy simulations. Protocol begins with parameterization of ligand and protein-ligand complex.
+```
+#####Required Outputs:
+1. vbla.txt: list of ligand heavy atoms for Boresch restraints.
+2. vbla2.txt: list of protein backbone atoms for Boresch restraints.
 
-Usage:
 
-1. Create a directory outside of otf_general, inside the parent directory
-2. Copy the ./run_abfe.sh file in: cp ../otf_general/otf_abfe/run_abfe.sh .
-3. Copy in desired abfe data directories
-4. Create another directory as the destination for the simulation to write to (-m option)
-5. Run the script below (show help: ```./run_abfe.sh -h```)
+####ABFE:
+Implementation of OTF Optimization for absolute binding free energy simulations. Assumes generation of vbla.txt and vbla2.txt for Boresch restraints.
+
+#####Setup:
+
+1. Copy otf_general/otf_abfe/*sh to your working directory
+2. Run ./abfe_all_prep.sh on all protein-ligand complex directories.
+	a. This will create your file architecture, copy important files and generate k.RST file (Boresch restraints).
+	b. Use associated options to select proper values of force constants for Boresch restraints. Note that values are in AMBER format and are equivalent to k/2.
+
+
+#####Running MD TI ABFE
+
+Run the script below (show help: ```./run_abfe.sh -h```)
 
 ```
 ./run_abfe.sh <options> <execution type ('dcrg','water','rtr','all')> <data directories>

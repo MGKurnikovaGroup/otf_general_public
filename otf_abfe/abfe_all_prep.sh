@@ -1,4 +1,9 @@
 #!/bin/bash
+
+##Prepares all protein-ligand complex directories for ABFE by creating valid input files, generating proper file archetecture, and generating k.RST file for Boresch restraints.
+##Note: force constants are in AMBER FORMAT meaning they are equivalent to k/2 in the standard spring force equation
+
+
 mywd=$(pwd)
 mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
 
@@ -69,7 +74,6 @@ do
 
     # copy all executable files
     cp $mypcl/template.cpp.get-vb.in ./
-    cp $mypcl/*sh ./
     cp $mypcl/dcrg+vdw/*sh dcrg+vdw/
     cp $mypcl/rtr/*sh rtr/
     cp $mypcl/rtr/*py rtr/
@@ -88,7 +92,7 @@ do
     cat vbla.txt; 
     echo
 
-    #edit samplep.cpp.get-vb.in to user inputted angle, distance, dihedral values
+    #edit template.cpp.get-vb.in to user inputted angle, distance, dihedral values
     cat <<EOF > template.cpp.get-vb.in
     parm complex.prmtop
     reference complex.inpcrd
@@ -122,14 +126,6 @@ EOF
     grep r2 k.RST
     cp k.RST dcrg+vdw/
     cp k.RST rtr/
-    echo
-
-    # create .RST files for different lambdas
-    cd rtr/
-    python3 py.set-vb.py k.RST
-    cp k.RST k-la-1.00.RST
-    cd ../
-
 
     #======water============
 

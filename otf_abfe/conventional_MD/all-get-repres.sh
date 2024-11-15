@@ -1,5 +1,4 @@
 #!/bin/bash
-
 mywd=$(pwd)
 for X in "$@"
 do
