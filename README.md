@@ -5,8 +5,8 @@ Implementation of On-The-Fly (OTF) Optimization for alchemical binding free ener
 ## Setup
 
 1. Create a directory, clone otf_general.
-2. Install [Anaconda](https://docs.anaconda.com/anaconda/install/)
-3. Install dependencies: pymbar==4.0.3, alchemlyb==2.3.1, scipy==1.8.1, AMBER20, GAUSSIAN 09 or GAUSSIAN 16 (for ligand parameterization):
+2. Install [Anaconda](https://docs.anaconda.com/anaconda/install/).
+3. Install dependencies: pymbar==4.0.3, alchemlyb==2.3.1, scipy==1.8.1, AMBER20, GAUSSIAN 09 or GAUSSIAN 16 (for ligand parameterization).
 
 
 ### **Absolute binding free energy**
@@ -32,17 +32,19 @@ Usage:
 1. Copy otf_general/otf_abfe/conventional_MD/*sh to working directory. Working directory should be outside of otf_abfe.
 2. Run ./all-copy-pcl.sh on all protein-ligand complex directories obtained from Parameterization Step.
 3. Run ./all-run-7ns.sh on all protein-ligand complex directories.
+4. Run ./all-rmsd-avg.sh on all protein-ligand complex directories with completed MD simulations. Note: you must update the respective cpptraj input script if you change the length/ligand name/simulation details.
+5. Run ./all-get-repres.sh on all protein-ligand complex directories with completed RMSD analysis to extract representative structures for ABFE. 
 ***
 
 #### Automated restraint analysis
-Implementation of algorithm for the automated selection of protein and ligand atoms for Boresch restraints from Chen et al.: 10.1021/acs.jcim.3c00013
+Implementation of algorithm for the automated selection of protein and ligand atoms for Boresch restraints from Chen et al.: 10.1021/acs.jcim.3c00013. Assumes completed conventional MD with extracted representative structures.
 
 Show Help: ```./auto_restraint.sh -h```
 ##### Usage:
 
 1. Copy otf_general/otf_abfe/auto_restraint_files/auto_restraint.sh to your working directory. Note: Working directory should be outside of otf_general.
-2. Run the following
-3. Note: the inputed directories should contain all the data files (see Options below). They should also be located just one level under otf_general, like otf_abfe.
+2. Run ./auto_restraint.sh on all protein-ligand complex directories.
+3. Note: the inputed directories should contain all the data files (see Options below).
 
 ```
 ./auto_restraint.sh <options> <directories>
@@ -77,7 +79,7 @@ Default values (if no input specified):
 Example:
 ```
 cd auto_restraint_files
-./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 357 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb ../lysozyme_test_case_restraints ../dir2 ../dir3
+./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 163 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb lysozyme*
 
 Implementation of OTF Optimization for absolute binding free energy simulations. Protocol begins with parameterization of ligand and protein-ligand complex.
 
