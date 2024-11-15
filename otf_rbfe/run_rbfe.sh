@@ -14,7 +14,7 @@ show_help() {
     echo "  -S, --schedule VALUE             Set schedule"
 	echo "  -n, --num-windows VALUE          Set number of windows"
 	echo "  -C, --custom-windows x,y,z       Set custom windows"
-	echo "  -o, --sssc VALUE                 Set sssc options (1, 2)"
+	echo "  -o, --sssc VALUE                 Set sssc alpha and beta options (1, 2)"
 	echo "  -m, --move-to VALUE              Set destination directory"
 	echo "  -A, --equil_restr VALUE            Set additional restraints"
     	echo "  -F, --fpn VALUE        Set number of frames to save per ns"

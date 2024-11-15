@@ -32,6 +32,8 @@ def update_input(lam, loc, dest, in_loc, sssc, prod=False, nstlim=0, add_restr='
         data = data.replace("scmask2 = 'SCM2'", "scmask2 = '"+scmask2+"'")
         if sssc == 1:
             data = data.replace("scalpha = 0.2, scbeta = 50.0", "scalpha = 0.5, scbeta = 12.0")
+        if sssc == 0:
+            data = data.replace("gti_lam_sch = 1, scalpha = 0.2, scbeta = 50.0","scalpha = 0.5, scbeta = 12.0") 
         if add_restr != '':
             data = data.replace("restraintmask='", "restraintmask='"+add_restr+"|")
     file.close()
