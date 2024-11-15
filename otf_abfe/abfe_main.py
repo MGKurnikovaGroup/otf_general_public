@@ -15,7 +15,9 @@ parser.add_argument('--schedule', type=str, default='equal', help='schedule for 
 parser.add_argument('--num_windows', type=int, default=10, help='number of lambda windows')
 parser.add_argument('--custom_windows', type=str, default=None, help='list of lambda window for dcrg and water (comma delimited)')
 parser.add_argument('--rtr_window', type=str, default='0.0,0.05,0.1,0.2,0.5,1.0', help='list of lambda windows for rtr (comma delimited)')
-parser.add_argument('--sssc', type=int, default=2, help='sssc option (0, 1, 2), 0 does not use smoothstep')
+parser.add_argument('--sssc', type=int, default=2, help='sssc option (0, 1, 2), 0 does not use smoothstep') #implementation needed
+parser.add_argument('--equil_restr', type=str, default='', help='additional restraints to add for equilibration, amber mask format')
+parser.add_argument('--fpn', type=int, default=0, help='trajectory frames per nanosecond to be saved')
 
 args=parser.parse_args()
 
@@ -29,8 +31,9 @@ gaussian_windows = {1:[0.5],
 
 #Creating lambda windows
 if args.schedule.lower() == 'equal':
-    if args.sssc == 0:
-        lambdas = [i/(args.num_windows-1) for i in range(args.num_windows)]
+    if False:
+    #if args.sssc == 0:
+    #    lambdas = [i/(args.num_windows-1) for i in range(args.num_windows)]
     else:
         assert(args.sssc == 1 or args.sssc == 2)
         lambdas = [(i+1)/(args.num_windows+1) for i in range(args.num_windows)]
@@ -51,21 +54,21 @@ rtr_lambdas = [float(i) for i in args.rtr_window.split(',')]
 #Executions (dcrg, water, rtr)
 if args.type == 'dcrg':
     for l in lambdas:
-        abfe_simulate.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc)
+        abfe_simulate.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc, args.equil_restr, args.fpn)
 
 elif args.type == 'water':
     for l in lambdas:
-        abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc)
+        abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc, args.fpn)
 
 elif args.type == 'rtr':
     for l in rtr_lambdas:
-        abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max)
+        abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max, args.fpn)
 elif args.type == 'all':
     for l in lambdas:
         print('a',args.directory_path)
-        abfe_simulate.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc)
-        abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc)
+        abfe_simulate.dcrg_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc, args.equil_restr, args.fpn)
+        abfe_simulate.water_abfe(l, args.directory_path, args.convergence_cutoff, args.initial_time, args.additional_time, args.first_max, args.second_max, args.sssc, args.fpn)
     for l in rtr_lambdas:
-        abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max)
+        abfe_simulate.rtr_abfe(l, args.directory_path, args.convergence_cutoff,  args.initial_time, args.additional_time, args.first_max, args.second_max, args.fpn)
 else:
     raise ValueError('type must be dcrg, water, or rtr')

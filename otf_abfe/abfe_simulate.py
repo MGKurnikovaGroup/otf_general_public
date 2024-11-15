@@ -16,7 +16,7 @@ sys.path.insert(0, root_dir)
 import convergence_test as ct
 
 
-def update_input(lam, loc, dest, sssc, prod=False, nstlim=0):
+def update_input(lam, loc, dest, sssc, equil_restr='', prod=False, nstlim=0):
     #moves input file from dest to loc with
     #updated lambda value lam
     lam=process_lam(lam)
@@ -24,8 +24,11 @@ def update_input(lam, loc, dest, sssc, prod=False, nstlim=0):
         data = file.read()
         if prod:
             data = data.replace('nstlim = z', 'nstlim = '+ str(int(math.floor(nstlim/0.000002))))
+            if frames_per_ns > 0:
+                data = data.replace('ntwx = 0', 'ntwx = '+ str(int(math.floor(500000/frames_per_ns))))
         data = data.replace('clambda = x', 'clambda = '+ lam)
-
+        if equil_restr != '':
+            data = data.replace("restraintmask='", "restraintmask='"+equil_restr+"|")
         #sssc options: 2 - leave as is, 1 - change values below
         if sssc == 1:
             data = data.replace('scalpha=0.2', 'scalpha=0.5')
@@ -74,7 +77,7 @@ def process_lam(lam):
         lam=lam.split('-')[1]
     return lam
 
-def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional_time, max_time_1, max_time_2, sssc):
+def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional_time, max_time_1, max_time_2, sssc, equil_restr, fpn):
     #Create Directory Architecture
     print('b',directory_path)
     lam=process_lam(lam)
@@ -86,13 +89,13 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
         os.mkdir("./dcrg+vdw/la-"+lam+'/3_npt')
         os.mkdir("./dcrg+vdw/la-"+lam+'/prod')
     #Create Input Files
-    update_input(lam, directory_path+'/dcrg+vdw/1_min/1min.in', "./dcrg+vdw/la-"+lam+'/1_min/1min.in', sssc)
-    update_input(lam, directory_path+'/dcrg+vdw/1_min/2min.in', "./dcrg+vdw/la-"+lam+'/1_min/2min.in', sssc)
-    update_input(lam, directory_path+'/dcrg+vdw/2_nvt/nvt.in', "./dcrg+vdw/la-"+lam+'/2_nvt/nvt.in', sssc)
-    update_input(lam, directory_path+'/dcrg+vdw/3_npt/1_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/1_npt.in', sssc)
-    update_input(lam, directory_path+'/dcrg+vdw/3_npt/2_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/2_npt.in', sssc)
-    update_input(lam, directory_path+'/dcrg+vdw/3_npt/3_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/3_npt.in', sssc)
-    update_input(lam, directory_path+'/dcrg+vdw/prod/prod.in', "./dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time)
+    update_input(lam, directory_path+'/dcrg+vdw/1_min/1min.in', "./dcrg+vdw/la-"+lam+'/1_min/1min.in', sssc, equil_restr)
+    update_input(lam, directory_path+'/dcrg+vdw/1_min/2min.in', "./dcrg+vdw/la-"+lam+'/1_min/2min.in', sssc, equil_restr)
+    update_input(lam, directory_path+'/dcrg+vdw/2_nvt/nvt.in', "./dcrg+vdw/la-"+lam+'/2_nvt/nvt.in', sssc, equil_restr)
+    update_input(lam, directory_path+'/dcrg+vdw/3_npt/1_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/1_npt.in', sssc, equil_restr)
+    update_input(lam, directory_path+'/dcrg+vdw/3_npt/2_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/2_npt.in', sssc, equil_restr)
+    update_input(lam, directory_path+'/dcrg+vdw/3_npt/3_npt.in', "./dcrg+vdw/la-"+lam+'/3_npt/3_npt.in', sssc, equil_restr)
+    update_input(lam, directory_path+'/dcrg+vdw/prod/prod.in', "./dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time, fpn=fpn)
     
     #Run TI
     os.chdir('dcrg+vdw')
@@ -122,7 +125,7 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
         dcrg_data=ct.analyze(lam,decorrelate=True)
     os.chdir('..')
 
-def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_time, max_time_1, max_time_2, sssc):
+def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_time, max_time_1, max_time_2, sssc, fpn):
     #Create Directory Architecture
     lam =process_lam(lam)
     if not os.path.exists("./water-dcrg+vdw/la-"+lam):
@@ -139,7 +142,7 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
     update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/1_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/1_npt.in', sssc)
     update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/2_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/2_npt.in', sssc)
     update_input(lam, directory_path+'/water-dcrg+vdw/3_npt/3_npt.in', "./water-dcrg+vdw/la-"+lam+'/3_npt/3_npt.in', sssc)
-    update_input(lam, directory_path+'/water-dcrg+vdw/prod/prod.in', "./water-dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time)
+    update_input(lam, directory_path+'/water-dcrg+vdw/prod/prod.in', "./water-dcrg+vdw/la-"+lam+'/prod/prod.in', sssc, prod=True, nstlim=initial_time,fpn=fpn)
 
     #Run TI
     os.chdir('water-dcrg+vdw')
@@ -169,7 +172,7 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
         wat_data=ct.analyze(lam, decorrelate=True)
     os.chdir('..')
 
-def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_time, max_time_1, max_time_2):
+def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_time, max_time_1, max_time_2, fpn):
     #prepare input files
     lam=process_lam(lam)
     print(lam)
@@ -179,7 +182,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
         os.mkdir("./rtr/la-"+lam)
         os.mkdir("./rtr/la-"+lam+'/prod')
 
-    update_input_rtr(lam, directory_path+'/rtr/prod/prod.in', './rtr/la-'+lam+'/prod/prod.in', '00', initial_time)
+    update_input_rtr(lam, directory_path+'/rtr/prod/prod.in', './rtr/la-'+lam+'/prod/prod.in', '00', initial_time, fpn=fpn)
     
     #Run TI
     os.chdir('rtr')
@@ -201,7 +204,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
         counter_quotient = counter // 10
         if counter_remainder == 9:
             update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
-                    str(counter + 1), nstlim=additional_time)
+                    str(counter + 1), nstlim=additional_time, fpn=fpn)
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         else:
             update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
