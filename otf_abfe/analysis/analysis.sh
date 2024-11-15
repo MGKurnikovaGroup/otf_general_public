@@ -3,11 +3,11 @@ mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
 mywd=$(pwd)
 for X in "$@"
 do	
-	cp $mypcl/analysis.py $X
+	cp $mypcl/analysis/analysis.py $X
 	cd $X
         python3 analysis.py
 	cd ..
 done
-cp $mypcl/compile_analysis.py .
+cp $mypcl/analysis/compile_analysis.py .
 python3 compile_analysis.py "$@"
 ls
