@@ -40,7 +40,8 @@ Protocol for performing short conventional MD simulations of the protein-ligand 
 ./all-copy-pcl.sh <directories>
 ./all-run-7ns.sh <directories>
 ./all-rmsd-avg.sh <directories>
-./all-get-repres.sh <directories>```
+./all-get-repres.sh <directories>
+```
 ***
 #### ***Required Output:***
 ***
