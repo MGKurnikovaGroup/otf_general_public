@@ -125,11 +125,14 @@ Options:
 | `-a`   | additional time (float)                      |
 | `-f`   | first max value (float)                      |
 | `-s`   | second max value (float)                     |
-| `-S`   | schedule ('equal' OR 'gaussian' OR 'custom')  |
+| `-S`   | schedule ('equal' OR 'gaussian' OR 'custom') |
 | `-n`   | number of windows (int)                      |
-| `-C`   | custom windows ([float],[float],[float],...)  |
-| `-r`   | rtr window ([float],[float],[float],...)      |
-| `-m`   | destination directory (string of path name)   |
+| `-C`   | custom windows ([float],[float],[float],...) |
+| `-r`   | rtr window ([float],[float],[float],...)     |
+| `-m`   | destination directory (string of path name)  |
+| `-A`   | Set additional restraints for equilibration  |
+| `-F`   | Set number of frames to save per ns (int)    |
+| `-o`   | Alpha and Beta parameters for SSSC(2) (1,2)  |
 
 Default values (if no input specified):
 
@@ -144,63 +147,23 @@ Default values (if no input specified):
 | `num_windows`         | `10`                            |
 | `rtr_window`          | `'0.0,0.05,0.1,0.2,0.5,1.0'`    |
 | `move_to`             | `.`                             |
+| `equil_restr`         | `''`                            |
+| `fpn`                 | `0`                             |
+| `sssc`                | `2`                             |
 
-Example:
+
+
+
+
+######Example:
 ```
-cd otf_abfe/
-./run_abfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/lysozyme_testing all lys_0 lys_1
-```
+./run_abfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/lysozyme_testing all lysozyme*
 
 
-#### Automated restraint analysis
-[Description]
+####Analysis:
 
-Show Help: ```./auto_restraint.sh -h```
-##### Usage:
-
-1. Navigate to otf_abfe/auto_restraint_files
-2. Run the following
-3. Note: the inputted directories should contain all the data files (see Options below). They should also be located just one level under otf_general, like otf_abfe.
-
-```
-./auto_restraint.sh <options> <directories>
-```
-##### Options:
-
-| Option | Description                                |
-|--------|--------------------------------------------|
-| `-p`   | topology file (string of path name)        |
-| `-t`   | trajectory file (string of path name)      |
-| `-l`   | ligand residue name (string)               |
-| `-s`   | protein residue id, start of range (int)   |
-| `-e`   | protein residue id, end of range (int)     |
-| `-f`   | fraction cutoff (float)                    |
-| `-L`   | ligand file (string of path name)          |
-| `-P`   | pdb file (string of path name)             |
-
-Default values (if no input specified):
-
-
-| Option                 | Default Value              |
-|------------------------|----------------------------|
-| `topology_file`        | `complex.prmtop`           |
-| `trajectory_file`      | `nvt-7ns.nc`               |
-| `ligand_res_name`      | `MOL`                      |
-| `protein_res_id_start` | `2`                        |
-| `protein_res_id_end`   | `357`                      |
-| `fraction_cutoff`      | `0.5`                      |
-| `ligand_file`          | `setup/lig_tleap.mol2`     |
-| `pdb_file`             | `complex-repres.pdb`       |
-
-Example:
-```
-cd auto_restraint_files
-./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 357 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb ../lysozyme_test_case_restraints ../dir2 ../dir3
-```
-
-
-***
-
+Copy otf_general/otf_abfe/analysis.sh to your working directory and run on completed ABFE simulations. Output generated in `abfe_summary.dat`.
+Analysis performed using the bootstrap method. 
 
 ### **Relative binding free energy**
 ***
