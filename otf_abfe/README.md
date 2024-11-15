@@ -89,30 +89,36 @@ Default values (if no input specified):
 | `pdb_file`             | `complex-repres.pdb`       |
 
 Example:
+
 ```
 cd auto_restraint_files
 ./auto_restraint.sh -p complex.prmtop -t nvt-7ns.nc -l MOL -s 2 -e 163 -f 0.5 -L setup/lig_tleap.mol2 -P complex-repres.pdb lysozyme*
-
-```
+``
 #### ***Required Outputs:***
 ***
 1. vbla.txt: list of ligand heavy atoms for Boresch restraints.
 2. vbla2.txt: list of protein backbone atoms for Boresch restraints.
 
 
-####ABFE:
+#### ***ABFE:***
+***
 Implementation of OTF Optimization for absolute binding free energy simulations. Assumes generation of vbla.txt and vbla2.txt for Boresch restraints.
 
-#####Setup:
+#### ***Directory Architecture***
+dcrg+vdw: contains AMBER input files for decoupling of ligand in complex. Files are copied on the fly to protein-ligand complex directory and updated to contain user specified parameters.
+rtr: contains AMBER input files for the addition of the Boresch restraints. Files are copied on the fly to protein-ligand complex directory and updated to contain user specified parameters.
+water-dcrg+vdw: contains AMBER input files for the decoupling of the ligand in solution. Files are copied on the fly to protein-ligand complex directory and updated to contain user specified parameters.
 
+##### ***Setup:***
+***
 1. Copy otf_general/otf_abfe/*sh to your working directory
 2. Run ./abfe_all_prep.sh on all protein-ligand complex directories.
 	a. This will create your file architecture, copy important files and generate k.RST file (Boresch restraints).
 	b. Use associated options to select proper values of force constants for Boresch restraints. Note that values are in AMBER format and are equivalent to k/2.
 
 
-#####Running MD TI ABFE
-
+##### ***Running MD TI ABFE***
+***
 Run the script below (show help: ```./run_abfe.sh -h```)
 
 ```
@@ -154,22 +160,24 @@ Default values (if no input specified):
 | `fpn`                 | `0`                             |
 | `sssc`                | `2`                             |
 
-
-
-
-
-######Example:
+##### ***Example:***
 ```
 ./run_abfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/lysozyme_testing all lysozyme*
+```
 
-
-####Analysis:
-
-Copy otf_general/otf_abfe/analysis.sh to your working directory and run on completed ABFE simulations. Output generated in `abfe_summary.dat`.
+#### ***Analysis:***
+***
+Copy otf_general/otf_abfe/analysis/analysis.sh to your working directory and run on completed ABFE simulations. Output generated in `abfe_summary.dat`.
 Analysis performed using the bootstrap method. 
 
-### **Relative binding free energy**
+#### ***test_systems***
 ***
-[Description]
+Contains starting structures for T4 Lysozyme and PLpro ABFE.
 
-## 
+##### ***lysozyme_abfe***
+***
+Contains input files to perform parameterization using both GAUSSIAN 09 or GAUSSIAN 16, as well as conventional MD and ABFE on both systems. Each step can be performed in a stand alone manner.
+
+##### ***plpro_abfe***
+***
+Contains input files to perform ABFE simulations on PLpro only
