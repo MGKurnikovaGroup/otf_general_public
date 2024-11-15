@@ -36,12 +36,12 @@ Protocol for performing short conventional MD simulations of the protein-ligand 
 3. Run ./all-run-7ns.sh on all protein-ligand complex directories.
 4. Run ./all-rmsd-avg.sh on all protein-ligand complex directories with completed MD simulations. Note: you must update the respective cpptraj input script if you change the length/ligand name/simulation details.
 5. Run ./all-get-repres.sh on all protein-ligand complex directories with completed RMSD analysis to extract representative structures for ABFE. 
-***
-`./all-copy-pcl.sh <directories>`
-`./all-run-7ns.sh <directories>`
-`./all-rmsd-avg.sh <directories>`
-`./all-get-repres.sh <directories>`
 
+`./all-copy-pcl.sh <directories>
+./all-run-7ns.sh <directories>
+./all-rmsd-avg.sh <directories>
+./all-get-repres.sh <directories>`
+***
 #### ***Required Output: ***
 ***
 1. complex-repres.[pdb, rst7, prmtop] or equivalent files
