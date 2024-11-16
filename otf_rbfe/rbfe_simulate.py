@@ -10,7 +10,7 @@ import shlex
 import glob
 import math
 
-def update_input(lam, loc, dest, in_loc, sssc, prod=False, nstlim=0, add_restr='', frames_per_ns = 0):
+def update_input(lam, loc, dest, in_loc, sssc, prod=False, nstlim=0, add_restr='', frames_per_ns = 0, ctm=None):
     #moves input file from dest to loc with
     #updated lambda value lam
     lam=process_lam(lam)
@@ -30,6 +30,8 @@ def update_input(lam, loc, dest, in_loc, sssc, prod=False, nstlim=0, add_restr='
         data = data.replace('clambda = x', 'clambda = '+ lam)
         data = data.replace("scmask1 = 'SCM1'", "scmask1 = '"+scmask1+"'")
         data = data.replace("scmask2 = 'SCM2'", "scmask2 = '"+scmask2+"'")
+        if not (ctm is None):
+            data = data.replace("timask1 = ':L0', timask2 = ':L1',", "timask1 = '"+ctm[0]+"', timask2 = ':"+ctm[1]+"',")
         if sssc == 1:
             data = data.replace("scalpha = 0.2, scbeta = 50.0", "scalpha = 0.5, scbeta = 12.0")
         if sssc == 0:

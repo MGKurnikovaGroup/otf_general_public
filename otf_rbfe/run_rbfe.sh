@@ -22,6 +22,7 @@ show_help() {
 	echo "  -R --reference_lam VALUE	 Special treatment for broken trajectories"
 	echo "  -sp -special VALUE		 Use site or water"
 	echo "  -T --target_lam	VALUE		 Special treatment for broken trajectory equil" 		
+	echo "  -ctm --custom_ti_mask VALUE      List of custom masks for TI"
 	echo "See README.md for default inputs."
 }
 
@@ -40,6 +41,7 @@ frames_per_ns=0
 reference_lam=-1
 target_lam=-1
 special='site'
+ctm=[]
 
 #process parameters
 while [[ $# -gt 0 ]]; do
@@ -103,7 +105,12 @@ while [[ $# -gt 0 ]]; do
 		-sp|--special)
 			special="$2"
 			shift 2
-			;;	
+			;;
+		-ctm|--custom_ti_mask)
+			special="$2"
+                        shift 2
+                        ;;
+	
         -h|--help)
             show_help
             exit 0
@@ -126,14 +133,14 @@ done
 type=$1
 shift 1
 
-FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --special $special --target_lam $target_lam --reference_lam $reference_lam --equil_restr $equil_restr --fpn $frames_per_ns"
+FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --special $special --target_lam $target_lam --reference_lam $reference_lam --equil_restr $equil_restr --fpn $frames_per_ns --ctm $custom_ti_mask"
 for X in "$@"
 do
 	cd $X
 	cp $mypcl/*.py .
 	cp $mypcl/../convergence_test.py .
 
-	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special" --equil_restr "$equil_restr" --fpn "$frames_per_ns" --reference_lam "$reference_lam" --target_lam "$target_lam"
+	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special" --equil_restr "$equil_restr" --fpn "$frames_per_ns" --reference_lam "$reference_lam" --target_lam "$target_lam" --ctm "$custom_ti_mask"
 
 	echo -e $FLAGS >> otf_log.txt
 
