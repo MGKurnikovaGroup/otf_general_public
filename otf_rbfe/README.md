@@ -42,7 +42,7 @@ Options:
 | `-m`   | destination directory (string of path name)                  |
 | `-A`   | Set additional restraints for equilibration (str)            |
 | `-F`   | Set number of frames to save per ns (int)                    |
-| `-o`   | Alpha and Beta parameters for SSSC(2) (1,2)                  |
+| `-o`   | Alpha and Beta parameters for SSSC(2), or no SSSC (0,1,2)    |
 | `-sp`  | Indicates which step to use special treatment (site or water)|
 | `-R`   | Reference lam for special treatment protocol (float)         |
 | `-T`   | Target lam for special treatment protocol    (float)         |
@@ -81,17 +81,18 @@ Default values (if no input specified):
 
 #### ***Analysis:***
 ***
-Copy otf_general/otf_rbfe/analysis/analysis_gt.sh to your working directory and run on completed RBFE simulations. Output generated in `rbfe_summary.dat`.
+Copy otf_general/otf_rbfe/analysis/analysis_gt.sh to your working directory and run on completed RBFE simulations with option for gaussian quadrature or trapezoid integration. Output generated in `rbfe_summary.dat`.
 Analysis performed using the bootstrap method. 
 
 #### ***test_systems***
 ***
-Contains starting structures for T4 Lysozyme and PLpro ABFE.
+Contains starting structures for CDK2 and PLpro RBFE.
 
-##### ***lysozyme_abfe***
+##### ***CDK2***
 ***
-Contains input files to perform parameterization using both GAUSSIAN 09 or GAUSSIAN 16, as well as conventional MD and ABFE on both systems. Each step can be performed in a stand alone manner.
+Contains input files to perform RBFE simulations. Do not run the write_scmask.py script on these files as the naming convention is different from what we typically use.
+In order to replicate this work, `-o 0` should be employed. `-ctm1 :556`, `-ctm2 :557`, `-ctmw1 :1`, and `-ctmw2 :2` can be employed to simplify the thuse of `./run_rbfe.sh`
 
-##### ***plpro_abfe***
+##### ***plpro_rbfe***
 ***
-Contains input files to perform ABFE simulations on PLpro only
+Contains input files to perform RBFE simulations on PLpro only
