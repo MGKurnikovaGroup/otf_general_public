@@ -106,11 +106,17 @@ while [[ $# -gt 0 ]]; do
 			special="$2"
 			shift 2
 			;;
-		-ctm|--custom_ti_mask)
-			special="$2"
+		-ctm1|--custom_ti_mask1)
+			custom_ti_mask1="$2"
                         shift 2
                         ;;
+		-ctm2|--custom_ti_mask2)
+                        custom_ti_mask2="$2"
+                        shift 2
+                        ;;
+
 	
+
         -h|--help)
             show_help
             exit 0
@@ -132,7 +138,8 @@ done
 
 type=$1
 shift 1
-
+echo $type
+echo $custom_ti_mask1 $custom_ti_mask2
 FLAGS="--convergence_cutoff $convergence_cutoff --initial_time $initial_time --additional_time $additional_time\n--first_max $first_max --second_max $second_max\n--schedule $schedule --num_windows $num_windows --custom_windows $custom_windows\n--sssc $sssc --special $special --target_lam $target_lam --reference_lam $reference_lam --equil_restr $equil_restr --fpn $frames_per_ns --ctm $custom_ti_mask"
 for X in "$@"
 do
@@ -140,7 +147,7 @@ do
 	cp $mypcl/*.py .
 	cp $mypcl/../convergence_test.py .
 
-	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special" --equil_restr "$equil_restr" --fpn "$frames_per_ns" --reference_lam "$reference_lam" --target_lam "$target_lam" --ctm "$custom_ti_mask"
+	python3 rbfe_main.py "$mypcl" "$type" "$_d"/$X/scmask.txt --convergence_cutoff "$convergence_cutoff" --initial_time "$initial_time" --additional_time "$additional_time" --first_max "$first_max" --second_max "$second_max" --schedule "$schedule" --num_windows "$num_windows" --custom_windows "$custom_windows" --sssc "$sssc" --special "$special" --equil_restr "$equil_restr" --fpn "$frames_per_ns" --reference_lam "$reference_lam" --target_lam "$target_lam" --ctm1 "$custom_ti_mask1" --ctm2 "$custom_ti_mask2"
 
 	echo -e $FLAGS >> otf_log.txt
 

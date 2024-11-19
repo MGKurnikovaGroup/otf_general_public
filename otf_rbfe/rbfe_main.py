@@ -39,7 +39,8 @@ parser.add_argument('--equil_restr', type=str, default='', help='additional rest
 parser.add_argument('--target_lam', type=float, default='-1', help='enter the target lambda window for special treatment pf lambda equilibration')
 parser.add_argument('--reference_lam', type=float, default='-1', help='enter the lambda window to be referenced for special treatment of lambda equilibration')
 parser.add_argument('--fpn', type=int, default=0, help='trajectory frames per nanosecond to be saved')
-parser.add_argument('--custom_ti', type=list, default=[], help='list of custom amber masks for TI mask: [TI1,TI2]')
+parser.add_argument('--ctm1', type=str, default='', help='list of custom amber masks for TI mask: [TI1,TI2]')
+parser.add_argument('--ctm2', type=str, default='', help='list of custom amber masks for TI mask: [TI1,TI2]')
 
 args=parser.parse_args()
 
@@ -51,7 +52,8 @@ gaussian_windows = {1:[0.5],
                     9:[0.01592,0.08198,0.19331,0.33787,0.5,0.66213,0.80669,0.91802,0.98408],
                     12:[0.00922,0.04794,0.11505,0.20634,0.31608,0.43738,0.56262,0.68392,0.79366,0.88495,0.95206,0.99078]}
 
-
+ctm = [args.ctm1, args.ctm2]
+print("CTM", ctm)
 if args.schedule.lower() == 'equal':
     if args.sssc == 0:
         lambdas = [i/(args.num_windows-1) for i in range(args.num_windows)]
@@ -97,22 +99,22 @@ if args.target_lam != -1:
 
 if args.type == 'site': 
     for l in lambdas:
-        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam,special=args.special, fpn=args.fpn, ctm=args.custom_ti)
+        rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam,special=args.special, fpn=args.fpn, ctm=ctm)
 elif args.type == 'water':
     for l in lambdas:
-        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special,ctm=args.custom_ti)
+        rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special,ctm=ctm)
 elif args.type == 'all':
     for l in lambdas:
         if args.special == 'site' and args.target_lam != -1:
             print('site and target_lam', args.target_lam)
-            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special,ctm=args.custom_ti)
-            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=-1, reference_lam=-1, fpn=args.fpn,ctm=args.custom_ti)
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special,ctm=ctm)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=-1, reference_lam=-1, fpn=args.fpn,ctm=ctm)
         elif args.special == 'water' and args.target_lam != -1:
-            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn,ctm=args.custom_ti)
-            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special,ctm=args.custom_ti)
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn,ctm=ctm)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn, special=args.special,ctm=ctm)
         else:
-            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn,ctm=args.custom_ti)
-            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn,ctm=args.custom_ti)
+            rbfe.site_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc,add_restr=args.equil_restr, target_lam=-1, reference_lam=-1, fpn=args.fpn,ctm=ctm)
+            rbfe.water_rbfe(l, args.directory_path, args.convergence_cutoff, args.in_loc, args.initial_time, args.additional_time, args.first_max, args.second_max, sssc=args.sssc, target_lam=args.target_lam, reference_lam=args.reference_lam, fpn=args.fpn,ctm=ctm)
 else:
     raise ValueError('type must be site, water, or all')
 

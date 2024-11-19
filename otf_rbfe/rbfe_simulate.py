@@ -31,7 +31,8 @@ def update_input(lam, loc, dest, in_loc, sssc, prod=False, nstlim=0, add_restr='
         data = data.replace("scmask1 = 'SCM1'", "scmask1 = '"+scmask1+"'")
         data = data.replace("scmask2 = 'SCM2'", "scmask2 = '"+scmask2+"'")
         if not (ctm is None):
-            data = data.replace("timask1 = ':L0', timask2 = ':L1',", "timask1 = '"+ctm[0]+"', timask2 = ':"+ctm[1]+"',")
+            print(ctm)
+            data = data.replace("timask1 = ':L0', timask2 = ':L1',", "timask1 = '"+str(ctm[0])+"', timask2 = '"+str(ctm[1])+"',")
         if sssc == 1:
             data = data.replace("scalpha = 0.2, scbeta = 50.0", "scalpha = 0.5, scbeta = 12.0")
         if sssc == 0:
@@ -49,7 +50,7 @@ def process_lam(lam):
         lam=lam.split('-')[1]
     return lam
 
-def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc = 2, add_restr='', fpn=0, target_lam=-1, special='site', decorrelate = True):
+def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, additional_time, max_time_1, max_time_2, reference_lam = -1, sssc = 2, add_restr='', fpn=0, target_lam=-1, special='site', decorrelate = True, ctm = None):
     #Create Directory Architecture
     lam=process_lam(lam)
     if not reference_lam == -1:
@@ -63,13 +64,13 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
         os.mkdir("./site/la-"+lam+'/prod')
     
     #Create Input Files
-    update_input(lam, directory_path+'/site/1_min/1min.in', "./site/la-"+lam+'/1_min/1min.in', in_loc, sssc, add_restr=add_restr)
-    update_input(lam, directory_path+'/site/1_min/2min.in', "./site/la-"+lam+'/1_min/2min.in', in_loc, sssc, add_restr=add_restr)
-    update_input(lam, directory_path+'/site/2_nvt/nvt.in', "./site/la-"+lam+'/2_nvt/nvt.in', in_loc, sssc, add_restr=add_restr)
-    update_input(lam, directory_path+'/site/3_npt/1_npt.in', "./site/la-"+lam+'/3_npt/1_npt.in', in_loc, sssc, add_restr=add_restr)
-    update_input(lam, directory_path+'/site/3_npt/2_npt.in', "./site/la-"+lam+'/3_npt/2_npt.in', in_loc, sssc, add_restr=add_restr)
-    update_input(lam, directory_path+'/site/3_npt/3_npt.in', "./site/la-"+lam+'/3_npt/3_npt.in', in_loc, sssc)
-    update_input(lam, directory_path+'/site/prod/prod.in', "./site/la-"+lam+'/prod/prod.in', in_loc, sssc, prod=True, nstlim = initial_time, frames_per_ns = fpn)
+    update_input(lam, directory_path+'/site/1_min/1min.in', "./site/la-"+lam+'/1_min/1min.in', in_loc, sssc, add_restr=add_restr, ctm=ctm)
+    update_input(lam, directory_path+'/site/1_min/2min.in', "./site/la-"+lam+'/1_min/2min.in', in_loc, sssc, add_restr=add_restr, ctm=ctm)
+    update_input(lam, directory_path+'/site/2_nvt/nvt.in', "./site/la-"+lam+'/2_nvt/nvt.in', in_loc, sssc, add_restr=add_restr, ctm=ctm)
+    update_input(lam, directory_path+'/site/3_npt/1_npt.in', "./site/la-"+lam+'/3_npt/1_npt.in', in_loc, sssc, add_restr=add_restr, ctm=ctm)
+    update_input(lam, directory_path+'/site/3_npt/2_npt.in', "./site/la-"+lam+'/3_npt/2_npt.in', in_loc, sssc, add_restr=add_restr, ctm=ctm)
+    update_input(lam, directory_path+'/site/3_npt/3_npt.in', "./site/la-"+lam+'/3_npt/3_npt.in', in_loc, sssc, ctm=ctm)
+    update_input(lam, directory_path+'/site/prod/prod.in', "./site/la-"+lam+'/prod/prod.in', in_loc, sssc, prod=True, nstlim = initial_time, frames_per_ns = fpn, ctm = ctm)
     
     #Run TI
     os.chdir('site')
@@ -89,7 +90,7 @@ def site_rbfe(lam, directory_path, convergence_cutoff, in_loc, initial_time, add
     while (not ct.check_convergence(site_data, convergence_cutoff)[0] and counter < math.floor((max_time_1-initial_time)/additional_time)) or len(site_data) <= 50: #Checks convergence criteria
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
-            update_input(lam, directory_path+'/site/prod/restart.in', './la-'+lam+'/prod/restart.in', in_loc, sssc, prod=True, nstlim=additional_time, frames_per_ns = fpn)
+            update_input(lam, directory_path+'/site/prod/restart.in', './la-'+lam+'/prod/restart.in', in_loc, sssc, prod=True, nstlim=additional_time, frames_per_ns = fpn, ctm=ctm)
         counter_remainder = counter % 10
         counter_quotient = counter // 10
         if counter_remainder == 9:
