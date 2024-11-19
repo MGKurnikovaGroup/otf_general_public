@@ -23,22 +23,35 @@ Algorithm: On-the-Fly Resource Optimization for Binding Free Energy Simulations
 
 3. Evaluate the JS distance:
     if JS distance < 0.1:
+   
         - Terminate simulation (converged).
     else:
+   
         - Check if simulation time is less than 6.5 nanoseconds (ns):
+   
             if yes:
+   
                 - Proceed to Step 4 (short additional simulation).
+   
             else:
+   
                 - Check if there are more than 50 decorrelated samples:
+   
                     if yes:
+   
                         - Terminate simulation (sufficient decorrelated samples).
+   
                     else:
+   
                         - Proceed to Step 4 (short additional simulation).
 
-4. Run a short additional simulation and increment the simulation time.
+5. Run a short additional simulation and increment the simulation time.
 
-5. Evaluate total computed simulation time:
+6. Evaluate total computed simulation time:
     if total simulation time < 10.5 ns:
+   
         - Repeat from Step 2.
-    else:
+
+   else:
+   
         - Terminate simulation (time limit reached).
