@@ -2,7 +2,7 @@
 
 Implementation of On-The-Fly (OTF) Optimization for alchemical binding free energy simulations using thermodynamic integration in AMBER20. See 10.26434/chemrxiv-2023-rtpsz for details.
 
-##***Setup***
+## ***Setup***
 ***
 
 1. Create a directory, clone otf_general.
@@ -10,7 +10,7 @@ Implementation of On-The-Fly (OTF) Optimization for alchemical binding free ener
 3. Install dependencies: pymbar==4.0.3, alchemlyb==2.3.1, scipy==1.8.1, AMBER20, GAUSSIAN 09 or GAUSSIAN 16 (for ligand parameterization).
 
 
-##***Algorith***
+## ***Algorith***
 ***
 
 Algorithm: On-the-Fly Resource Optimization for Binding Free Energy Simulations
