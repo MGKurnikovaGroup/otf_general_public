@@ -12,61 +12,76 @@ water: contains AMBER input files for the mutation of ligand 1 (:L0) to  ligand 
 ***
 1. Copy otf_general/otf_rbfe/*sh to your working directory
 2. Run ./rbfe_all_prep.sh on all protein-ligand complex directories.
-	a. This will create your file architecture, copy important files and generate the scmask (Boresch restraints).
-	b. Use associated options to select proper values of force constants for Boresch restraints. Note that values are in AMBER format and are equivalent to k/2.
+	a. This will create your file architecture, copy important files and generate the scmask from the ligwat.pdb file.
+	b. Required directory architecture: The protein-ligand complex directory contains two directories: site, which contains complex.prmtop and complex.inpcrd, and water, which contains ligwat.prmtop, ligwat.inpcrd, and ligwat.pdb.
 
 
-##### ***Running MD TI ABFE***
+##### ***Running MD TI RBFE***
 ***
-Run the script below (show help: ```./run_abfe.sh -h```)
+Run the script below (show help: ```./run_rbfe.sh -h```)
 
 ```
-./run_abfe.sh <options> <execution type ('dcrg','water','rtr','all')> <data directories>
+./run_rbfe.sh <options> <execution type ('site','water','all')> <data directories>
 ```
+
+Note: Special treatment protocol uses the the output of the first minimization step from the reference lambda as the starting input for the target lambda. This was found to overcome numerical instability in our previous work. See Gusev et al. DOI: 10.1021/acs.jcim.2c01052 for details.
 
 Options:
 
-| Option | Description                                  |
-|--------|----------------------------------------------|
-| `-c`   | convergence cutoff (float)                   |
-| `-i`   | initial time (float)                         |
-| `-a`   | additional time (float)                      |
-| `-f`   | first max value (float)                      |
-| `-s`   | second max value (float)                     |
-| `-S`   | schedule ('equal' OR 'gaussian' OR 'custom') |
-| `-n`   | number of windows (int)                      |
-| `-C`   | custom windows ([float],[float],[float],...) |
-| `-r`   | rtr window ([float],[float],[float],...)     |
-| `-m`   | destination directory (string of path name)  |
-| `-A`   | Set additional restraints for equilibration  |
-| `-F`   | Set number of frames to save per ns (int)    |
-| `-o`   | Alpha and Beta parameters for SSSC(2) (1,2)  |
+| Option | Description                                                  |
+|--------|--------------------------------------------------------------|
+| `-c`   | convergence cutoff (float)                                   |
+| `-i`   | initial time (float)                                         |
+| `-a`   | additional time (float)                                      |
+| `-f`   | first max value (float)                                      |
+| `-s`   | second max value (float)                                     |
+| `-S`   | schedule ('equal' OR 'gaussian' OR 'custom')                 |
+| `-n`   | number of windows (int)                                      |
+| `-C`   | custom windows ([float],[float],[float],...)                 |
+| `-r`   | rtr window ([float],[float],[float],...)                     |
+| `-m`   | destination directory (string of path name)                  |
+| `-A`   | Set additional restraints for equilibration (str)            |
+| `-F`   | Set number of frames to save per ns (int)                    |
+| `-o`   | Alpha and Beta parameters for SSSC(2) (1,2)                  |
+| `-sp`  | Indicates which step to use special treatment (site or water)|
+| `-R`   | Reference lam for special treatment protocol (float)         |
+| `-T`   | Target lam for special treatment protocol    (float)         |
+| `-ctm1`| Custom Amber Mask for Site timask1 (str)                     |
+| `-ctm2`| Custom Amber Mask for Site timask2 (str)                     |
+|`-ctmw1`| Custom Amber Mask for Water timask1 (str)                    |
+|`-ctmw2`| Custom Amber Mask for Water timask2 (str)                    |
 
 Default values (if no input specified):
 
 | Option                | Default Value                   |
 |-----------------------|---------------------------------|
-| `convergence_cutoff`  | `0.1`                           |
-| `initial_time`        | `2.5`                           |
-| `additional_time`     | `0.5`                           |
-| `first_max`           | `6.5`                           |
-| `second_max`          | `10.5`                          |
-| `schedule`            | `'equal'`                       |
-| `num_windows`         | `10`                            |
-| `rtr_window`          | `'0.0,0.05,0.1,0.2,0.5,1.0'`    |
-| `move_to`             | `.`                             |
-| `equil_restr`         | `''`                            |
-| `fpn`                 | `0`                             |
-| `sssc`                | `2`                             |
+| `-c`                  | `0.1`                           |
+| `-i`                  | `2.5`                           |
+| `-a`                  | `0.5`                           |
+| `-f`                  | `6.5`                           |
+| `-s`                  | `10.5`                          |
+| `-S`                  | `'equal'`                       |
+| `-n`                  | `9`                             |
+| `-m`                  | `.`                             |
+| `-A`                  | `''`                            |
+| `-F`                  | `0`                             |
+| `-o`                  | `2`                             |
+|  `-sp`                | `'site'`                        |
+| `-R`                  | `-1`                            |
+| `-T`                  | `-1`                            |
+| `-ctm1`               | `''`                            |
+| `-ctm2`               | `''`                            |
+|`-ctmw1`               | `''`                            |
+|`-ctmw2`               | `''`                            |
 
 ##### ***Example:***
 ```
-./run_abfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/lysozyme_testing all lysozyme*
+./run_rbfe.sh -i 0.2 -a 0.5 -f 1 -s 2 -S equal -n 5 -m ~/data/cdk2_testing all *~*
 ```
 
 #### ***Analysis:***
 ***
-Copy otf_general/otf_abfe/analysis/analysis.sh to your working directory and run on completed ABFE simulations. Output generated in `abfe_summary.dat`.
+Copy otf_general/otf_rbfe/analysis/analysis_gt.sh to your working directory and run on completed RBFE simulations. Output generated in `rbfe_summary.dat`.
 Analysis performed using the bootstrap method. 
 
 #### ***test_systems***

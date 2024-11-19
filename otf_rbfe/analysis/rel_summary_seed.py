@@ -7,4 +7,4 @@ for x in sys.argv[2:]:
     df2 = pd.read_csv(x+'/lam_seed.csv')
     df2['Name'] = [x]
     df = pd.concat((df, df2))
-df.to_csv('rel_summary_seed.dat', sep = '\t', index = False)
+df.to_csv('rbfe_summary.dat', sep = '\t', index = False)
