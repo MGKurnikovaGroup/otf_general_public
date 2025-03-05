@@ -16,7 +16,7 @@ sys.path.insert(0, root_dir)
 import convergence_test as ct
 
 
-def update_input(lam, loc, dest, sssc, equil_restr='', prod=False, nstlim=0):
+def update_input(lam, loc, dest, sssc, equil_restr='', prod=False, nstlim=0, fpn=0):
     #moves input file from dest to loc with
     #updated lambda value lam
     lam=process_lam(lam)
@@ -24,7 +24,7 @@ def update_input(lam, loc, dest, sssc, equil_restr='', prod=False, nstlim=0):
         data = file.read()
         if prod:
             data = data.replace('nstlim = z', 'nstlim = '+ str(int(math.floor(nstlim/0.000002))))
-            if frames_per_ns > 0:
+            if fpn > 0:
                 data = data.replace('ntwx = 0', 'ntwx = '+ str(int(math.floor(500000/frames_per_ns))))
         data = data.replace('clambda = x', 'clambda = '+ lam)
         if equil_restr != '':

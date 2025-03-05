@@ -31,12 +31,8 @@ gaussian_windows = {1:[0.5],
 
 #Creating lambda windows
 if args.schedule.lower() == 'equal':
-    if False:
-    #if args.sssc == 0:
-    #    lambdas = [i/(args.num_windows-1) for i in range(args.num_windows)]
-    else:
-        assert(args.sssc == 1 or args.sssc == 2)
-        lambdas = [(i+1)/(args.num_windows+1) for i in range(args.num_windows)]
+    assert(args.sssc == 1 or args.sssc == 2)
+    lambdas = [(i+1)/(args.num_windows+1) for i in range(args.num_windows)]
 elif args.schedule.lower() == 'gaussian':
     if args.num_windows not in gaussian_windows:
         raise ValueError('Gaussian window not available for this number of windows')
