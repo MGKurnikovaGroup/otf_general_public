@@ -15,6 +15,30 @@ k_b = 1.9872041e-3  # Boltzmann constant
 t_eq = 0.5  # Equilibration time in ns
 
 # Function to parse constants from MD output files:untouched 
+def calc_dvdl(current_values, ref_values, force_constants):
+    if len(current_values) == len(ref_values) and len(ref_values) == len(force_constants):
+        dvdl = 0
+        for i in range(len(current_values)):
+            dvdl += force_constants[i]*((float(current_values[i])-ref_values[i])**2)
+        return dvdl
+
+    else:
+        print('Number of current values, reference values and/or constants is not the same:')
+        print(len(current_values),' ',len(ref_values),' ',len(force_constants))
+
+# this function check values of dihedral angles and converts them to a correct range if needed.
+# I.e., if reference value is 179 but a raw value at some frame is -175,
+# this value should be converted to 185 to obtain a correct dv/dl.
+def check_dihedrals(current_values, ref_values):
+    checkout = []
+    for i in [2,4,5]:
+        absdelta = abs(float(current_values[i])-ref_values[i])
+        #checkout.append(absdelta)
+        if absdelta > 240:
+            initial = current_values[i]
+            current_values[i] = ref_values[i] - abs(360.0 - absdelta)
+            checkout.append(str(i)+' diheral value is changed:  '+str(initial)+'  '+str(current_values[i]))
+    return [current_values, checkout]
 
 def parse_constants(lam, from_rtr=False):
     istep1, ntpr, dt, nstlim = 0, 0, 0, 0

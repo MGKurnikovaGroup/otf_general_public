@@ -38,7 +38,7 @@ def update_input(lam, loc, dest, sssc, equil_restr='', prod=False, nstlim=0, fpn
     with open(dest, 'w') as file:
         file.write(data)
 
-def update_input_rtr(lam, loc, dest, counter, nstlim):
+def update_input_rtr(lam, loc, dest, counter, nstlim, fpn=0):
     #moves input file from dest to loc with
     #updated lambda value lam
     lam=process_lam(lam)
