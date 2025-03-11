@@ -9,8 +9,8 @@ Parameterization of Protein-Ligand Complex and Solvated Ligand for absolute bind
 
 #### ***Usage:***
 ***
-1. Create working directory outside of otf_general.
-2. Copy otf_general/otf_abfe/parameterization directory to working directory. Copy parameterization/*.sh to working directory.
+1. Create working directory outside of otf_general_public.
+2. Copy otf_general_public/otf_abfe/parameterization directory to working directory. Copy parameterization/*.sh to working directory.
 3. Copy a pdb of your protein with hydrogens added and without the ligand as input-for-prep/protein_H.pdb. Note: This pdb can be solvated with ions added or not. If not, make the required changes to tleap.complex.in to solvated and neutralize your system.
 4. Run ./all-prep-lig-g16.sh or ./all-prep-lig-g09.sh as required by your Gaussian installation with your ligand files as input. Update the parameters within these shell scripts as needed to match your machine, ligand charge, etc.
 5. Note: If no waters are within 1.0 angstroms of your molecule, complex.prmtop and complex.inpcrd will fail to generate. One should simply copy the complex0.prmtop and complex0.inpcrd from the ligand setup directory to the ligand md-complex directory as complex.prmtop and complex.inpcrd
@@ -31,7 +31,7 @@ Protocol for performing short conventional MD simulations of the protein-ligand 
 
 #### ***Usage:***
 ***
-1. Copy otf_general/otf_abfe/conventional_MD/*sh to working directory. Working directory should be outside of otf_abfe.
+1. Copy otf_general_public/otf_abfe/conventional_MD/*sh to working directory. Working directory should be outside of otf_abfe.
 2. Run ./all-copy-pcl.sh on all protein-ligand complex directories obtained from Parameterization Step.
 3. Run ./all-run-7ns.sh on all protein-ligand complex directories.
 4. Run ./all-rmsd-avg.sh on all protein-ligand complex directories with completed MD simulations. Note: you must update the respective cpptraj input script if you change the length/ligand name/simulation details.
@@ -55,7 +55,7 @@ Show Help: `./auto_restraint.sh -h`
 
 #### ***Usage:***
 ***
-1. Copy otf_general/otf_abfe/auto_restraint_files/auto_restraint.sh to your working directory. Note: Working directory should be outside of otf_general.
+1. Copy otf_general_public/otf_abfe/auto_restraint_files/auto_restraint.sh to your working directory. Note: Working directory should be outside of otf_general_public.
 2. Run ./auto_restraint.sh on all protein-ligand complex directories.
 3. Note: the inputed directories should contain all the data files (see Options below).
 
@@ -111,7 +111,7 @@ water-dcrg+vdw: contains AMBER input files for the decoupling of the ligand in s
 
 ##### ***Setup:***
 ***
-1. Copy otf_general/otf_abfe/*sh to your working directory
+1. Copy otf_general_public/otf_abfe/*sh to your working directory
 2. Run ./abfe_all_prep.sh on all protein-ligand complex directories.
 	a. This will create your file architecture, copy important files and generate k.RST file (Boresch restraints).
 	b. Use associated options to select proper values of force constants for Boresch restraints. Note that values are in AMBER format and are equivalent to k/2.
@@ -167,7 +167,7 @@ Default values (if no input specified):
 
 #### ***Analysis:***
 ***
-Copy otf_general/otf_abfe/analysis/analysis.sh to your working directory and run on completed ABFE simulations. Output generated in `abfe_summary.dat`.
+Copy otf_general_public/otf_abfe/analysis/analysis.sh to your working directory and run on completed ABFE simulations. Output generated in `abfe_summary.dat`.
 Analysis performed using the bootstrap method. 
 
 #### ***test_systems***
