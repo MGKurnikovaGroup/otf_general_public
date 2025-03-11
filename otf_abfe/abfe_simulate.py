@@ -51,6 +51,8 @@ def update_input_rtr(lam, loc, dest, counter, nstlim, fpn=0):
         else:
             data = data.replace('DISANG=../y', 'DISANG=../k-la-' + lam +'.RST')
             data = data.replace('DUMPAVE = x', 'DUMPAVE = rstr_'+lam+str(counter))
+        if fpn > 0:
+            data = data.replace('ntwx = 0', 'ntwx = '+ str(int(math.floor(500000/frames_per_ns))))
     file.close()
     with open(dest, 'w') as file:
         file.write(data)
@@ -112,7 +114,7 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
         #3rd: sufficx of restart file to use
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
-            update_input(lam, directory_path+'/dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', sssc, prod=True, nstlim=additional_time)
+            update_input(lam, directory_path+'/dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', sssc, prod=True, nstlim=additional_time, fpn=fpn)
         counter_remainder = counter % 10
         counter_quotient = counter // 10
         if counter_remainder == 9:
@@ -159,7 +161,7 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
         #3rd: sufficx of restart file to use
         print('Beginning restart '+str(counter+1))
         if not os.path.exists('./la-'+lam+'/prod/restart.in'):
-            update_input(lam, directory_path+'/water-dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', sssc, prod=True, nstlim=additional_time)
+            update_input(lam, directory_path+'/water-dcrg+vdw/prod/restart.in', './la-'+lam+'/prod/restart.in', sssc, prod=True, nstlim=additional_time, fpn=fpn)
         counter_quotient = counter // 10
         counter_remainder = counter % 10
         if counter_remainder == 9:
@@ -208,7 +210,7 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         else:
             update_input_rtr(lam, directory_path+'/rtr/prod/restart.in', './la-'+lam+'/prod/restart.in',
-                    str(counter_quotient)+str(counter_remainder+1), nstlim=additional_time)
+                    str(counter_quotient)+str(counter_remainder+1), nstlim=additional_time, fpn=fpn)
             subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
