@@ -10,7 +10,7 @@ water: contains AMBER input files for the mutation of ligand 1 (:L0) to  ligand 
 
 ##### ***Setup:***
 ***
-1. Copy otf_general/otf_rbfe/*sh to your working directory
+1. Copy otf_general_public/otf_rbfe/*sh to your working directory
 2. Run ./rbfe_all_prep.sh on all protein-ligand complex directories.
 	a. This will create your file architecture, copy important files and generate the scmask from the ligwat.pdb file.
 	b. Required directory architecture: The protein-ligand complex directory contains two directories: site, which contains complex.prmtop and complex.inpcrd, and water, which contains ligwat.prmtop, ligwat.inpcrd, and ligwat.pdb.
@@ -81,7 +81,7 @@ Default values (if no input specified):
 
 #### ***Analysis:***
 ***
-Copy otf_general/otf_rbfe/analysis/analysis_gt.sh to your working directory and run on completed RBFE simulations with option for gaussian quadrature or trapezoid integration. Output generated in `rbfe_summary.dat`.
+Copy otf_general_public/otf_rbfe/analysis/analysis_gt.sh to your working directory and run on completed RBFE simulations with option for gaussian quadrature or trapezoid integration. Output generated in `rbfe_summary.dat`.
 Analysis performed using the bootstrap method. 
 
 #### ***test_systems***
@@ -91,7 +91,7 @@ Contains starting structures for CDK2 and PLpro RBFE.
 ##### ***CDK2***
 ***
 Contains input files to perform RBFE simulations. Do not run the write_scmask.py script on these files as the naming convention is different from what we typically use.
-In order to replicate this work, `-o 0` should be employed. `-ctm1 :556`, `-ctm2 :557`, `-ctmw1 :1`, and `-ctmw2 :2` can be employed to simplify the thuse of `./run_rbfe.sh`
+In order to replicate this work, `-o 0` should be employed. `-ctm1 :556`, `-ctm2 :557`, `-ctmw1 :1`, and `-ctmw2 :2` can be employed to simplify the the use of `./run_rbfe.sh`
 
 ##### ***plpro_rbfe***
 ***
