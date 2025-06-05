@@ -20,7 +20,7 @@ parser.add_argument('-j', action='store_true')  # This defines a flag '-j'
 args = parser.parse_args()
 
 
-for X in sys.argv[1:]:
+for X in sys.argv[2:]:
 	for f in glob.glob(os.path.join(mypcl, "*.py")):  #cp $mypcl/*.py $X
 		shutil.copy(f, X)
 
