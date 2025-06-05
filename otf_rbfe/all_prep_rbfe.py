@@ -4,6 +4,9 @@ import shutil
 import os
 import sys
 import subprocess
+import argparse
+
+
 
 # Below we go to the user's home directory and assign the path to "otf_rbfe" to the variable mypcl
 home_dir = os.pathexpanduser("~")
@@ -25,5 +28,5 @@ for X in sys.argv[1:]:
 		shutil.copy(f, os.path.join(X, "water"))
 
 	os.chdir(X)
-	subprocess.run(['python3', "otf_rbfe/write_scmask.py"], check = True)
+	subprocess.run(['python3', "otf_rbfe/write_scmask.py"], check = True) ##use argparse to make this optional. Default should be to run it unless otherwise specified
 	os.chdir("..")	
