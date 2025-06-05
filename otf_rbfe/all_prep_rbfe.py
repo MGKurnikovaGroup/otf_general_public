@@ -4,6 +4,7 @@ import shutil
 import os
 import sys
 import subprocess
+import argparse
 
 # Below we go to the user's home directory and assign the path to "otf_rbfe" to the variable mypcl
 home_dir = os.pathexpanduser("~")
@@ -24,6 +25,11 @@ for X in sys.argv[1:]:
 	for f in glob.glob(os.path.join(mypcl, "site", "*.sh")): #cp $mypcl/water/cpp* $X/water
 		shutil.copy(f, os.path.join(X, "water"))
 
-	os.chdir(X)
-	subprocess.run(['python3', "otf_rbfe/write_scmask.py"], check = True)
-	os.chdir("..")	
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-j', action='store_true')  # This defines a flag '-j'
+	args = parser.parse_args()
+
+	if not args.j: 	#Only run below if -j not called
+		os.chdir(X)
+		subprocess.run(['python3', "otf_rbfe/write_scmask.py"], check = True)
+		os.chdir("..")	
