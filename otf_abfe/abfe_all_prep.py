@@ -27,7 +27,7 @@ Help messages are specified in the description and help variables
 """
 def parse_args():
     parser = argparse.ArgumentParser(
-            description = "" # Comment displayed at the top when --help is called
+            description = "", # Comment displayed at the top when --help is called
             formatter_class = RawDescriptionHelpFormatter
     )
 
@@ -66,4 +66,49 @@ def read_atoms(file_path):
 Main procedure
 """
 def main():
+    args = parse_args() # Parse flags and store parameters
+    mywd = Path.cwd().resolve() # mywd=$(pwd)
+    mypcl = find_dir_abfe() # Directory of otf_abfe
 
+    for X in args.dirs: # for X in "$@"
+        print(f"=====  {X}  =======================")
+        target = Path(X)
+        if not target.is_absolute():
+            target = mywd / target
+        target = target.resolve()
+        if not target.is_dir():
+            sys.stderr.write(f"Warning: {target} is not a directory, skipping.\n")
+            continue # Avoid undefined behaviors and raise error if directory is not found
+        os.chdir(target) # cd $X/
+
+        # Create directories
+        # mkdir dcrg+vdw, water-dcrg+vdw, rtr
+        for sub in ['dcrg+vdw', 'water-dcrg+vdw', 'rtr']:
+            (target / sub).mkdir(parents = True, exist_ok = True)
+
+        # Copy input coordinate files
+        shutil.copy('complex-repres.rst7', 'complex.inpcrd') # cp complex-repres.rst7 ./complex.inpcrd
+        shutil.copy('complex-repres.rst7', target / 'dcrg+vdw' / 'complex.inpcrd') # cp complex-repres.rst7 ./dcrg+vdw/complex.inpcrd
+        shutil.copy('complex-repres.rst7', target / 'rtr' / 'complex_prod.inpcrd') # cp complex-repres.rst7 ./rtr/complex_prod.inpcrd
+
+        # Copy topologies
+        shutil.copy(target / 'md-complex' / 'complex.prmtop', 'complex.prmtop') # cp md-complex/complex.prmtop ./
+        shutil.copy(target / 'md-complex' / 'complex.prmtop', target / 'dcrg+vdw' / 'complex.prmtop') # cp md-complex/complex.prmtop ./dcrg+vdw/
+        shutil.copy(target / 'md-complex' / 'complex.prmtop', target / 'rtr' / 'complex.prmtop') # cp md-complex/complex.prmtop ./rtr/
+
+        # Copy all executable files
+        shutil.copy(mypcl / 'template.cpp.get-vb.in', target / 'template.cpp.get-vb.in') # cp $mypcl/template.cpp.get-vb.in ./
+        for f in (mypcl / 'dcrg+vdw').glob('*.sh'):
+            shutil.copy(f, target / 'dcrg+vdw') # cp $mypcl/dcrg+vdw/*sh dcrg+vdw/
+        for f in (mypcl / 'rtr').glob('*.sh'):
+            shutil.copy(f, target / 'rtr') # cp $mypcl/rtr/*sh rtr/
+        for f in (mypcl / 'rtr').glob('*.py'):
+            shutil.copy(f, target / 'rtr') # cp $mypcl/rtr/*py rtr/
+
+        # Use names of selected ligand atoms to generate cpp.get-vb.in
+        myla1, myla2, myla3 = read_atoms(target / 'vbla.txt')
+        mypa1, mypa2, mypa3 = read_atoms(target / 'vbla2.txt')
+        print("\nvbla.txt:")
+        print((target / 'vbla.txt').read_text())
+
+        
