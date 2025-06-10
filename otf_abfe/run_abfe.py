@@ -1,6 +1,7 @@
 import os
 import sys
 import argparse
+from pathlib import Path
 import shutil
 import glob
 import subprocess
@@ -14,15 +15,15 @@ If the directory is not found, display an error.
 def find_dir_abfe():
     home = Path.home()
     for path in home.rglob('otf_abfe'):
-        if path.isdir():
+        if path.is_dir():
             return path.resolve() # mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
     sys.stderr.write("Error: Cannot find otf_abfe directory\n")
     sys.exit(1)
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description = "",
-        usage = "Usage: $0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN"
+        usage = "$0 [OPTIONS] [type: dcrg, water, rtr, all] dir1 dir2 ... dirN",
+        epilog = "See README.md for default inputs."
     ) # echo "Usage: ..."
 
     parser.add_argument(
@@ -49,7 +50,7 @@ def parse_args():
     parser.add_argument("-n", "--num-windows", type = int, default = 10,
                         help = "Set number of windows")
     parser.add_argument("-C", "--custom-windows", default = "",
-                        metavar = "x,y,z", help = "Set custom windows")
+                        metavar = "x,y,z", help = "Set explicit custom windows")
     parser.add_argument("-r", "--rtr-window", default = "0.0,0.05,0.1,0.2,0.5,1.0",
                         metavar = "x,y,z", help = "Set rtr window")
     parser.add_argument("-o", "--sssc", type = int, default = 2,
@@ -76,4 +77,50 @@ def main():
     schedule = {args.schedule}
     num_windows = {args.num_windows}
     custom_windows = {args.custom_windows}
-    rtr_window = {args.}
+    rtr_window = {args.rtr_window}
+    type = {args.type}
+    sssc = {args.sssc}
+    directories = {args.dirs}
+    otf_abfe directory: {mypcl}
+    moving to: {args.move_to}""") # echo "..."
+
+    for X in args.dirs: # for X in "$@" do ... done
+        print(f"===== {X} =======================")
+        target = Path(X)
+        if not target.is_absolute():
+            target = mywd / target
+        target = target.resolve()
+        if not target.is_dir():
+            sys.stderr.write(f"Warning: {target} is not a directory, skipping.\n")
+            continue
+        os.chdir(target) # cd $X
+
+        for f in mypcl.glob('*.py'):
+            shutil.copy(f, target) # cp $mypcl/*.py .
+        shutil.copy(mypcl.parent / "convergence_test.py", target) # cp $mypcl/../convergence_test.py .
+
+        cmd = [
+            "python3", "abfe_main.py",
+            mypcl, args.type,
+            "--convergence-cutoff", str(args.convergence_cutoff),
+            "--initial_time", str(args.initial_time),
+            "--additional_time", str(args.additional_time),
+            "--first_max", str(args.first_max),
+            "--second_max", str(args.second_max),
+            "--schedule", str(args.schedule),
+            "--num_windows", str(args.num_windows),
+            "--custom_windows", str(args.custom_windows),
+            "--rtr_window", str(args.rtr_window),
+            "--sssc", str(args.sssc),
+            "--equil_rest", str(args.equil_restr),
+            "--fpn", str(args.frames_per_ns)
+        ]
+        subprocess.run(cmd, cwd = target, check = True) # python3 abfe_main.py ...
+        
+        os.chdir(target.parent) # cd ..
+        dst_parent = Path(args.move_to)
+        dst_parent.mkdir(parents = True, exist_ok = True) # Make the directory args.move_to if it does not exist
+        shutil.move(target, dst_parent) # mv $X "$move_to"
+
+if __name__ == '__main__':
+    main()
