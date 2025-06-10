@@ -14,7 +14,7 @@ If the directory is not found, display an error.
 def find_dir_abfe():
     home = Path.home()
     for path in home.rglob('otf_abfe'):
-        if path.isdir():
+        if path.is_dir():
             return path.resolve() # mypcl=$(realpath $(find ~/ -type d -name "otf_abfe"))
     sys.stderr.write("Error: Cannot find otf_abfe directory\n")
     sys.exit(1)
@@ -27,8 +27,7 @@ Help messages are specified in the description and help variables
 """
 def parse_args():
     parser = argparse.ArgumentParser(
-            description = "", # Comment displayed at the top when --help is called
-            formatter_class = argparse.RawDescriptionHelpFormatter
+        usage = "$0 [options] dir1 dir2 ... dirN" # echo "Usage: $0 [options] dir1 dir2 ... dirN"
     )
 
     parser.add_argument(
