@@ -11,6 +11,8 @@ print(_d)
 home_dir = os.path.expanduser("~")
 mypcl = os.path.join(home_dir, "otf_rbfe") #mypcl=$(realpath $(find ~/ -type d -name "otf_rbfe"))
 
+args = parse_args()
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description = "",
@@ -87,19 +89,19 @@ def parse_args():
         help = "Special treatment for broken trajectory equil" # echo "  -a, --additional-time VALUE      Set additional time"
     )
     parser.add_argument(
-        '-ctm1', '--custom_ti_mask', type = str, default = "",
+        '-ctm1', '--custom_ti_mask1', dest = 'custom_ti_mask1', type = str, default = "",
         help = "Custom masks for protein-ligand complex TI for lig1" # echo "  -a, --additional-time VALUE      Set additional time"
     )
     parser.add_argument(
-        '-ctm2', '--custom_ti_mask', type = str, default = "",
+        '-ctm2', '--custom_ti_mask2', dest = 'custom_ti_mask2', type = str, default = "",
         help = "Custom masks for protein-ligand complex TI for lig2" # echo "  -a, --additional-time VALUE      Set additional time"
     )
     parser.add_argument(
-        '-ctmw1', '--custom_ti_mask', type = str, default = "",
+        '-ctmw1', '--custom_ti_mask_wat1', dest = 'custom_ti_mask_wat1', type = str, default = "",
         help = "Custom masks for solvated ligand TI for lig1" # echo "  -a, --additional-time VALUE      Set additional time"
     )
     parser.add_argument(
-        '-ctmw2', '--custom_ti_mask', type = str, default = "",
+        '-ctmw2', '--custom_ti_mask_wat2', dest = 'custom_ti_mask_wat2',  type = str, default = "",
         help = "Custom masks for solvated ligand TI for lig2" # echo "  -a, --additional-time VALUE      Set additional time"
     )
     parser.add_argument(
@@ -109,13 +111,30 @@ def parse_args():
     print("See README.md for default inputs")
     return parser.parse_args() # Return parsed flags
 
-for X in sys.argv[2:]:
+for X in arg.dirs:
     os.chdir(X)
     for f in glob.glob(os.path.join(mypcl, "*.py")):  #cp $mypcl/*.py $X
 		shutil.copy(f, X)
     shutil.copy("convergence_test.py", os.path.join(X, ".."))
 
-    subprocess.run(['python3', "rbfe_main.py"], check = True)
+    subprocess.run(['python3', "rbfe_main.py", mypcl, args.type, os.path.join(X, "scmask.txt"), "--convergence_cutoff", str(args.convergance_cutoff),
+    "--initial_time", str(args.initial_time),
+    "--additional_time", str(args.additional_time),
+    "--first_max", str(args.first_max),
+    "--second_max", str(args.second_max),
+    "--schedule", args.schedule,
+    "--num_windows", str(args.num_windows),
+    "--custom_windows", args.custom_windows,
+    "--sssc", str(args.sssc),
+    "--special", args.special,
+    "--equil_restr", args.equil_restr,
+    "--fpn", str(args.fpn_value),
+    "--reference_lam", str(args.referance_lam),
+    "--target_lam", str(args.target_lam),
+    "--ctm1", args.custom_ti_mask1,
+    "--ctm2", args.custom_ti_mask2,
+    "--ctmw1", args.custom_ti_mask_wat1,
+    "--ctmw2", args.custom_ti_mask_wat2], check = True)
     os.chdir("..")
 
 
