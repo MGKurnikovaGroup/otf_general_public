@@ -55,8 +55,8 @@ def parse_args():
         help = "Set number of windows" # echo "  -a, --additional-time VALUE      Set additional time"
     )
     parser.add_argument(
-        '-C', '--custom-windows', type = str, default = "equal",
-        help = "Set schedule" #  TODO check with ben
+        '-C', '--custom-windows', type = str, default = "",
+        help = "Set explicit custom windows" 
     )
     parser.add_argument(
         '-o', '--sssc', type = int, default = 2,
@@ -109,7 +109,14 @@ def parse_args():
     print("See README.md for default inputs")
     return parser.parse_args() # Return parsed flags
 
+for X in sys.argv[2:]:
+    os.chdir(X)
+    for f in glob.glob(os.path.join(mypcl, "*.py")):  #cp $mypcl/*.py $X
+		shutil.copy(f, X)
+    shutil.copy("convergence_test.py", os.path.join(X, ".."))
 
+    subprocess.run(['python3', "rbfe_main.py"], check = True)
+    os.chdir("..")
 
 
 
