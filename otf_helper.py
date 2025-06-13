@@ -35,6 +35,7 @@ class parameters():
                 '-o', self.cwd / self.curr_dir / f"{self.curr_name}_00.out",
                 '-r', self.cwd / self.curr_dir / f"{self.curr_name}_00.rst",
                 '-ref', self.cwd / self.curr_dir / f"{self.curr_name}_ref.rst"
+            ]
         else:
             cmd = [
                 'pmemd.cuda', '-O',
