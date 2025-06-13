@@ -12,6 +12,7 @@ import glob
 import math
 from rtr.rtr import *
 from water-dcrg+vdw.water.py import *
+from prod.restart.py import *
 
 import sys
 from pathlib import Path
@@ -171,9 +172,16 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
         counter_quotient = counter // 10
         counter_remainder = counter % 10
         if counter_remainder == 9:
-            subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        else:
-            subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
+            step = str(counter + 1)
+            prev_step = str(counter_quotient) + str(counter_remainder)
+            target_dir = Path("la-" + lam)
+            run_restart(target_dir, step, prev_step)
+        else:            
+            target_dir = Path("la-" + lam)
+            current_step = str(counter_quotient) + str(counter_remainder + 1)
+            previous_step = str(counter_quotient) + str(counter_remainder)
+
+            run_restart(target_dir, current_step, previous_step)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
         counter += 1
