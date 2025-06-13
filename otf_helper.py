@@ -17,9 +17,12 @@ class parameters():
         self.middle_name = middle_name
         self.special_name = special_name # name before .in that is different from all others
 
-    def run_pmemd(self, last : bool = False):
+    def run_pmemd(self, first : bool = False, last : bool = False):
         print(f"    {self.name}")
-        shutil.copy(self.cwd / self.prev_dir / f"{self.prev_name}.inpcrd", self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd") # First copy ...
+        if first:
+            shutil.copy(self.cwd / self.prev_dir / f"{self.prev_name}.inpcrd", self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd") # First copy ...
+        else:
+            shutil.copy(self.cwd / self.prev_dir / f"{self.prev_name}.rst", self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd") # First copy ...
         shutil.copy(self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd", self.cwd / self.curr_dir / f"{self.curr_name}_ref.rst") # Second copy ...
         if last:
             cmd = [
@@ -31,7 +34,6 @@ class parameters():
                 '-o', self.cwd / self.curr_dir / f"{self.curr_name}_00.out",
                 '-r', self.cwd / self.curr_dir / f"{self.curr_name}_00.rst",
                 '-ref', self.cwd / self.curr_dir / f"{self.curr_name}_ref.rst"
-            ] # All flags and file names that is going to be run
         else:
             cmd = [
                 'pmemd.cuda', '-O',
