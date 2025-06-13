@@ -11,7 +11,7 @@ import shlex
 import glob
 import math
 from rtr.prod.md-lambda.py import *
-from water-dcrg+vdw.md-equil.py import *
+from water-dcrg+vdw.water.py import *
 
 import sys
 from pathlib import Path
