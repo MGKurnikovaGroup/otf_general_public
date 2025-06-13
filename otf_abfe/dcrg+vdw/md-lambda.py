@@ -53,6 +53,6 @@ def main():
         args.dirs[0], "production", "3_npt", "complex_3npt", "prod",
         "complex_prod", "complex_prod", "prod", "complex"
     )
-    p_prod = run_pmemd(last = True)
+    p_prod.run_pmemd(last = True)
 
     os.chdir("..")
