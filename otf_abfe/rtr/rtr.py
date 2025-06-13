@@ -1,3 +1,4 @@
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..', '..')))
 from otf_helper import parameters
 import os
 import argparse
