@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 # Setup sys.path to import from parent
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..', '..')))
 from otf_helper import parameters
 
 def run_pmemd(params: parameters, step: str, prev_step: str):
