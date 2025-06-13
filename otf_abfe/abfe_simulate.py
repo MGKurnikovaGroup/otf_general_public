@@ -106,7 +106,8 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
     #Run TI
     os.chdir('dcrg+vdw')
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        # subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        run_dcrg()
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
@@ -153,7 +154,8 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
     #Run TI
     os.chdir('water-dcrg+vdw')
     if not os.path.exists("./la-"+lam+'/prod/ligwat_prod_00.out'):
-        subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt')) 
+        # subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        run_water()
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
@@ -194,7 +196,8 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
     os.chdir('rtr')
 
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        # subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        run_rtr()
 
     #Analyze data, restart simulation if necessary
     counter = 0
