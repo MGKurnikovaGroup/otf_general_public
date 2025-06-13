@@ -22,15 +22,9 @@ def run_pmemd(params: parameters, step: str, prev_step: str):
     ]
     subprocess.run(cmd, check=True)
 
-def run_restart():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("dir", type=Path)
-    parser.add_argument("step", type=str)       # corresponds to $2
-    parser.add_argument("prev_step", type=str)  # corresponds to $3
-    args = parser.parse_args()
-
-    os.chdir(args.dir)
-    print(f"echo Reading in input files from the directory {args.dir}")
+def run_restart(target_dir: Path, step: str, prev_step: str):
+    os.chdir(target_dir)
+    print(f"echo Reading in input files from the directory {target_dir}")
     print("    production")
 
     param1 = parameters(
@@ -45,8 +39,9 @@ def run_restart():
         raw_name="complex"
     )
 
-    run_pmemd(param1, step=args.step, prev_step=args.prev_step)
+    run_pmemd(param1, step=step, prev_step=prev_step)
     os.chdir("..")
+
 
 run_restart()
 
