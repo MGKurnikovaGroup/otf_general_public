@@ -7,7 +7,7 @@ import shutil
 class parameters():
     def __init__(self, cwd : Path, name : str, prev_dir : str, prev_name : str,
             curr_dir : str, curr_name : str, middle_name : str,
-            special_name : str):
+            special_name : str, raw_name : str):
         self.name = name # name in echo
         self.cwd = cwd # current working directory
         self.curr_dir = curr_dir # current directory in Path object
@@ -16,6 +16,7 @@ class parameters():
         self.prev_name = prev_name # previous file name
         self.middle_name = middle_name
         self.special_name = special_name # name before .in that is different from all others
+        self.raw_name = raw_name
 
     def run_pmemd(self, first : bool = False, last : bool = False):
         print(f"    {self.name}")
