@@ -10,7 +10,7 @@ import subprocess
 import shlex
 import glob
 import math
-from rtr.prod.md-lambda.py import *
+from rtr.rtr import *
 from water-dcrg+vdw.water.py import *
 
 import sys
