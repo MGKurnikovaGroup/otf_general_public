@@ -16,7 +16,7 @@ class parameters():
         self.prev_name = prev_name # previous file name
         self.middle_name = middle_name
         self.special_name = special_name # name before .in that is different from all others
-        self.raw_name = raw_name
+        self.raw_name = raw_name # name just before .prmtop
 
     def run_pmemd(self, first : bool = False, last : bool = False):
         print(f"    {self.name}")
