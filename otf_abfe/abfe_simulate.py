@@ -1,13 +1,17 @@
 #Provides methods for the simulation of lambda windows
 #Selected from main steps
 #Assumes starting from molecule directory
-
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..')))
+from otf_helper import parameters
 import os
 import shutil
 import subprocess
 import shlex
 import glob
 import math
+from rtr.prod.md-lambda.py import *
+from water-dcrg+vdw.water.py import *
 
 import sys
 from pathlib import Path
