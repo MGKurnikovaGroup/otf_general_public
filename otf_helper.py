@@ -21,30 +21,30 @@ class parameters():
     def run_pmemd(self, first : bool = False, last : bool = False):
         print(f"    {self.name}")
         if first:
-            shutil.copy(self.cwd / self.prev_dir / f"{self.prev_name}.inpcrd", self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd") # First copy ...
+            shutil.copy(f"{self.prev_dir}/{self.prev_name}.inpcrd", f"{self.curr_dir}/{self.middle_name}.inpcrd") # First copy ...
         else:
-            shutil.copy(self.cwd / self.prev_dir / f"{self.prev_name}.rst", self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd") # First copy ...
-        shutil.copy(self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd", self.cwd / self.curr_dir / f"{self.curr_name}_ref.rst") # Second copy ...
+            shutil.copy(f"{self.prev_dir}/{self.prev_name}.rst", f"{self.curr_dir}/{self.middle_name}.inpcrd") # First copy ...
+        shutil.copy(f"{self.curr_dir}/{self.middle_name}.inpcrd", f"{self.curr_dir}/{self.curr_name}_ref.rst") # Second copy ...
         if last:
             cmd = [
                 'pmemd.cuda', '-O',
                 '-i', f"{self.curr_dir}/{self.special_name}.in",
-                '-p', self.cwd.parent / f"{self.raw_name}.prmtop",
-                '-c', self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd",
-                '-x', self.cwd / self.curr_dir / f"{self.curr_name}_00.nc",
-                '-o', self.cwd / self.curr_dir / f"{self.curr_name}_00.out",
-                '-r', self.cwd / self.curr_dir / f"{self.curr_name}_00.rst",
-                '-ref', self.cwd / self.curr_dir / f"{self.curr_name}_ref.rst"
+                '-p', f"../{self.raw_name}.prmtop",
+                '-c', f"{self.curr_dir}/{self.middle_name}.inpcrd",
+                '-x', f"{self.curr_dir}/{self.curr_name}_00.nc",
+                '-o', f"{self.curr_dir}/{self.curr_name}_00.out",
+                '-r', f"{self.curr_dir}/{self.curr_name}_00.rst",
+                '-ref', f"{self.curr_dir}/{self.curr_name}_ref.rst"
             ]
         else:
             cmd = [
                 'pmemd.cuda', '-O',
                 '-i', f"{self.curr_dir}/{self.special_name}.in",
-                '-p', self.cwd.parent / f"{self.raw_name}.prmtop",
-                '-c', self.cwd / self.curr_dir / f"{self.middle_name}.inpcrd",
-                '-x', self.cwd / self.curr_dir / f"{self.curr_name}.nc",
-                '-o', self.cwd / self.curr_dir / f"{self.curr_name}.out",
-                '-r', self.cwd / self.curr_dir / f"{self.curr_name}.rst",
-                '-ref', self.cwd / self.curr_dir / f"{self.curr_name}_ref.rst"
-            ] # All flags and file names that is going to be run
-        subprocess.run(cmd, cwd = mywd, check = True)
+                '-p', f"../{self.raw_name}.prmtop",
+                '-c', f"{self.curr_dir}/{self.middle_name}.inpcrd",
+                '-x', f"{self.curr_dir}/{self.curr_name}.nc",
+                '-o', f"{self.curr_dir}/{self.curr_name}.out",
+                '-r', f"{self.curr_dir}/{self.curr_name}.rst",
+                '-ref', f"{self.curr_dir}/{self.curr_name}_ref.rst"
+            ]
+        return cmd
