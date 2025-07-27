@@ -1,8 +1,10 @@
-from otf_helper import parameters
+import sys
 import os
 import argparse
 import shutil
 from pathlib import Path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..', '..')))
+from otf_helper import parameters
 
 def main():
     parser = argparse.ArgumentParser()
