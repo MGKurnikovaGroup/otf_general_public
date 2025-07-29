@@ -1,17 +1,12 @@
 import os
 import sys
+import glob
 import argparse
 from pathlib import Path
 import shutil
 import subprocess
 
-# Below we go to the user's home directory and assign the path to "otf_rbfe" to the variable mypcl
-_d = os.getcwd()
-print(_d)
-home_dir = os.path.expanduser("~")
-mypcl = os.path.join(home_dir, "otf_rbfe") #mypcl=$(realpath $(find ~/ -type d -name "otf_rbfe"))
 
-args = parse_args()
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -111,7 +106,16 @@ def parse_args():
     print("See README.md for default inputs")
     return parser.parse_args() # Return parsed flags
 
-for X in arg.dirs:
+# Below we go to the user's home directory and assign the path to "otf_rbfe" to the variable mypcl
+args = parse_args()
+
+_d = os.getcwd()
+print(_d)
+home_dir = os.path.expanduser("~")
+mypcl = os.path.join(home_dir, "otf_rbfe") #mypcl=$(realpath $(find ~/ -type d -name "otf_rbfe"))
+
+
+for X in args.dirs:
     os.chdir(X)
     for f in glob.glob(os.path.join(mypcl, "*.py")):  #cp $mypcl/*.py $X
 		shutil.copy(f, X)
