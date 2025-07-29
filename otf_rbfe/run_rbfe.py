@@ -121,7 +121,7 @@ for X in args.dirs:
 		shutil.copy(f, X)
     shutil.copy("convergence_test.py", os.path.join(X, ".."))
 
-    subprocess.run(['python3', "rbfe_main.py", mypcl, args.type, os.path.join(X, "scmask.txt"), "--convergence_cutoff", str(args.convergance_cutoff),
+    subprocess.run(['python3', "rbfe_main.py", mypcl, args.type, os.path.join(X, "scmask.txt"), "--convergence_cutoff", str(args.convergence_cutoff),
     "--initial_time", str(args.initial_time),
     "--additional_time", str(args.additional_time),
     "--first_max", str(args.first_max),
