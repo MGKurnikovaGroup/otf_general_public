@@ -1,4 +1,5 @@
 import os
+import glob
 import sys
 import argparse
 from pathlib import Path
@@ -11,7 +12,6 @@ print(_d)
 home_dir = os.path.expanduser("~")
 mypcl = os.path.join(home_dir, "otf_rbfe") #mypcl=$(realpath $(find ~/ -type d -name "otf_rbfe"))
 
-args = parse_args()
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -111,11 +111,18 @@ def parse_args():
     print("See README.md for default inputs")
     return parser.parse_args() # Return parsed flags
 
-for X in arg.dirs:
+args = parse_args()
+
+for X in args.dirs:
     os.chdir(X)
     for f in glob.glob(os.path.join(mypcl, "*.py")):  #cp $mypcl/*.py $X
-		shutil.copy(f, X)
-    shutil.copy("convergence_test.py", os.path.join(X, ".."))
+        shutil.copy(f, os.path.join(X, os.path.basename(f)))
+        shutil.copy("convergence_test.py", X)
+
+    if not os.path.exists(scmask_path):
+        print(f"Warning: {scmask_path} not found. Skipping {X}.")
+        os.chdir("..")
+        continue
 
     subprocess.run(['python3', "rbfe_main.py", mypcl, args.type, os.path.join(X, "scmask.txt"), "--convergence_cutoff", str(args.convergance_cutoff),
     "--initial_time", str(args.initial_time),
@@ -136,6 +143,7 @@ for X in arg.dirs:
     "--ctmw1", args.custom_ti_mask_wat1,
     "--ctmw2", args.custom_ti_mask_wat2], check = True)
     os.chdir("..")
+    shutil.move(X, args.move_to)
 
 
 
