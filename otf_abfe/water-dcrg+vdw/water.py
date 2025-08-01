@@ -1,9 +1,11 @@
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..', '..')))
 from otf_helper import parameters
 import os
+import sys
 import shutil
 import argparser
 from pathlib import Path
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..', '..')))
 
 def run_water(lam):
     target = f"la-{lam}"
