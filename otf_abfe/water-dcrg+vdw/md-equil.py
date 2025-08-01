@@ -1,4 +1,4 @@
-import otf_helper
+from otf_helper import parameters
 import os
 import sys
 import shutil
