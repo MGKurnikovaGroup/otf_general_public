@@ -1,4 +1,6 @@
 #!/bin/bash
-# Install the Python package via setuptools into the conda build prefix
-$PYTHON setup.py install --single-version-externally-managed --record=record.txt
+# Exit immediately if a command exits with a non-zero status
+set -e
+# install the package using setup.py from the repo root
+$PYTHON setup.py install
 
