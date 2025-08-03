@@ -1,13 +1,19 @@
 #Provides methods for the simulation of lambda windows
 #Selected from main steps
 #Assumes starting from molecule directory
-
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname("otf_helper.py"), '..')))
+from otf_helper import parameters
 import shutil
 import subprocess
 import shlex
 import glob
 import math
+from rtr import *
+from water import *
+from dcrg import *
+from restart import *
 
 import sys
 from pathlib import Path
@@ -102,7 +108,8 @@ def dcrg_abfe(lam, directory_path, convergence_cutoff,  initial_time, additional
     #Run TI
     os.chdir('dcrg+vdw')
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        # subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        run_dcrg(lam)
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
@@ -149,7 +156,8 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
     #Run TI
     os.chdir('water-dcrg+vdw')
     if not os.path.exists("./la-"+lam+'/prod/ligwat_prod_00.out'):
-        subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt')) 
+        # subprocess.call(shlex.split('./md-equil.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        run_water(lam)
     #Analyze data, restart simulation if necessary
     counter = 0
     if len(glob.glob('./la-'+lam+'/prod/*.out')) > 1:
@@ -165,9 +173,16 @@ def water_abfe(lam, directory_path, convergence_cutoff,initial_time, additional_
         counter_quotient = counter // 10
         counter_remainder = counter % 10
         if counter_remainder == 9:
-            subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
-        else:
-            subprocess.call(shlex.split('./restart.sh la-'+lam+' '+str(counter_quotient)+str(counter_remainder+1) + ' ' + str(counter_quotient)+str(counter_remainder)))
+            step = str(counter + 1)
+            prev_step = str(counter_quotient) + str(counter_remainder)
+            target_dir = Path("la-" + lam)
+            run_restart(target_dir, step, prev_step)
+        else:            
+            target_dir = Path("la-" + lam)
+            current_step = str(counter_quotient) + str(counter_remainder + 1)
+            previous_step = str(counter_quotient) + str(counter_remainder)
+
+            run_restart(target_dir, current_step, previous_step)
         if counter >= math.floor((max_time_2-initial_time)/additional_time):
             break
         counter += 1
@@ -190,7 +205,8 @@ def rtr_abfe(lam, directory_path, convergence_cutoff, initial_time, additional_t
     os.chdir('rtr')
 
     if not os.path.exists("./la-"+lam+'/prod/complex_prod_00.out'):
-        subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        # subprocess.call(shlex.split('./md-lambda.sh la-'+lam+' > la-'+lam+'/std.md.txt'))
+        run_rtr(lam)
 
     #Analyze data, restart simulation if necessary
     counter = 0
